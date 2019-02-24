@@ -1,0 +1,57 @@
+.\objects\w25qxx.o: src\spi flash\flash read\w25qxx.c
+.\objects\w25qxx.o: src\spi flash\flash read\w25qxx.h
+.\objects\w25qxx.o: .\src\spi flash\flash read\spi\spi.h
+.\objects\w25qxx.o: .\src\spi flash\flash read\spi\spi.h
+.\objects\w25qxx.o: .\drivers\sys.h
+.\objects\w25qxx.o: .\drivers\stm32f10x.h
+.\objects\w25qxx.o: .\Libraries\CORE\core_cm3.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\system_stm32f10x.h
+.\objects\w25qxx.o: .\drivers\stm32f10x_conf.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h
+.\objects\w25qxx.o: .\drivers\stm32f10x.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_bkp.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_can.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_cec.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_crc.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_dac.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_dbgmcu.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_dma.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_exti.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_flash.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_fsmc.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_gpio.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_i2c.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_iwdg.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_pwr.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_rcc.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_rtc.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_sdio.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_spi.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_usart.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\stm32f10x_wwdg.h
+.\objects\w25qxx.o: .\Libraries\STM32F10x_StdPeriph_Driver\inc\misc.h
+.\objects\w25qxx.o: .\drivers\delay.h
+.\objects\w25qxx.o: .\drivers\sys.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\rtthread.h
+.\objects\w25qxx.o: .\RTE\RTOS\rtconfig.h
+.\objects\w25qxx.o: .\RTE\_Target_1\RTE_Components.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\rtdebug.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\rtdef.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\rtlibc.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\libc/libc_stat.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\libc/libc_errno.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\libc/libc_fcntl.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\libc/libc_ioctl.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\libc/libc_dirent.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\libc/libc_signal.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\signal.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\libc/libc_fdset.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\rtservice.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\rtm.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\rtthread.h
+.\objects\w25qxx.o: D:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include\rthw.h
