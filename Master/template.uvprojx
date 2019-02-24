@@ -384,7 +384,7 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\application\main.c</FilePath>
+              <FilePath>.\applications\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -394,7 +394,7 @@
             <File>
               <FileName>can_protocol.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\src\can communication\communication protocol\can_protocol.c</FilePath>
+              <FilePath>.\functions\can_protocol.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,4 +1,4 @@
-.\objects\can_protocol.o: src\can communication\communication protocol\can_protocol.c
+.\objects\can_protocol.o: functions\can_protocol.c
 .\objects\can_protocol.o: .\drivers\sys_conf.h
 .\objects\can_protocol.o: .\drivers\stm32f10x.h
 .\objects\can_protocol.o: .\Libraries\CORE\core_cm3.h

@@ -1,5 +1,5 @@
 Dependencies for Project 'template', Target 'Target 1': (DO NOT MODIFY !)
-F (.\src\application\main.c)(0x5C7266BA)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\applications -I .\drivers -I .\Libraries\STM32F10x_StdPeriph_Driver\inc -I .\Libraries\CORE -I .\functions-I.\RTE\_Target_1-ID:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-ID:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\applications\main.c)(0x5C7269B6)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\applications -I .\drivers -I .\Libraries\STM32F10x_StdPeriph_Driver\inc -I .\Libraries\CORE -I .\functions-I.\RTE\_Target_1-ID:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-ID:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (.\drivers\sys_conf.h)(0x5C725B34)
 I (.\drivers\stm32f10x.h)(0x5B86B304)
 I (.\Libraries\CORE\core_cm3.h)(0x56A132A4)
@@ -38,7 +38,7 @@ I (.\drivers\delay.h)(0x555AC82B)
 I (.\functions\can_protocol.h)(0x5C6A72AD)
 I (.\drivers\led.h)(0x5C4FC8FC)
 I (.\drivers\dma_usart1_debug.h)(0x5C51041F)
-F (.\src\can communication\communication protocol\can_protocol.c)(0x5C726732)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\applications -I .\drivers -I .\Libraries\STM32F10x_StdPeriph_Driver\inc -I .\Libraries\CORE -I .\functions-I.\RTE\_Target_1-ID:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-ID:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\can_protocol.o --omf_browse .\objects\can_protocol.crf --depend .\objects\can_protocol.d)
+F (.\functions\can_protocol.c)(0x5C726882)(-c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\applications -I .\drivers -I .\Libraries\STM32F10x_StdPeriph_Driver\inc -I .\Libraries\CORE -I .\functions-I.\RTE\_Target_1-ID:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include-ID:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER-o .\objects\can_protocol.o --omf_browse .\objects\can_protocol.crf --depend .\objects\can_protocol.d)
 I (.\drivers\sys_conf.h)(0x5C725B34)
 I (.\drivers\stm32f10x.h)(0x5B86B304)
 I (.\Libraries\CORE\core_cm3.h)(0x56A132A4)

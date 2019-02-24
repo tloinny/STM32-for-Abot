@@ -1,5 +1,5 @@
-#过滤所有编译过程生成的文件
-**/Object/
-
+#过滤所有编译过程生成的文件,除了hex文件
+**/Objects/*
+!**/Objects/*.hex
 #过滤DebugConfig文件夹
 **/DebugConfig/

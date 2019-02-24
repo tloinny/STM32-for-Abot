@@ -1,4 +1,4 @@
-.\objects\main.o: src\application\main.c
+.\objects\main.o: applications\main.c
 .\objects\main.o: .\drivers\sys_conf.h
 .\objects\main.o: .\drivers\stm32f10x.h
 .\objects\main.o: .\Libraries\CORE\core_cm3.h
