@@ -1,8 +1,0 @@
---c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork -I .\applications -I .\drivers -I .\Libraries\STM32F10x_StdPeriph_Driver\inc -I .\Libraries\CORE
--I.\RTE\RTOS
--I.\RTE\_Target_1
--ID:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include
--ID:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\1.1.0\Device\Include
--ID:\Keil_v5\ARM\PACK\rt-thread\rtthread\3.0.3\include
--D__UVISION_VERSION="525" -D_RTE_ -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER
--o .\objects\stm32f10x_iwdg.o --omf_browse .\objects\stm32f10x_iwdg.crf --depend .\objects\stm32f10x_iwdg.d --feedback ".\Objects\template.fed" "Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_iwdg.c"
