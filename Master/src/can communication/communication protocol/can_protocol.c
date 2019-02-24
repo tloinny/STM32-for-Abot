@@ -71,7 +71,7 @@ u8 CAN_distribute(u8 * buf, u8 len)
 			result += Can_Send_Msg(can_buf, CAN_buf_size, slave[(i-1)/3]);	/* 分发数据 */
 			DEBUG_USART_DMA_Tx_Start(can_buf, CAN_buf_size);	/* 给上位机反馈 */
 		}
-		delay_ms(100);
+		delay_ms(5);
 		clean_can_buf();
 	}
 	return result;
