@@ -59,4 +59,6 @@
 #define slave_5			0x04000000	/* mask: 0x04000000 */	
 #define slave_all 	0x07Ef0000
 
+#define DelayForRespond delay_ms(6)
+
 #endif

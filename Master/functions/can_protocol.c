@@ -3,6 +3,7 @@
 u8 can_buf[CAN_buf_size] = {0};
 u8 can_rec_buf[CAN_buf_size] = {0};
 u32 slave[slave_num_max] = {slave_0,slave_1,slave_2,slave_3,slave_4,slave_5};
+u8 slave_num = 0;
 
 /**
  *@function CAN向从机发送速度信息和弧度制的角度信息
@@ -66,12 +67,12 @@ u8 CAN_distribute(u8 * buf, u8 len)
 		*(can_buf+1)=*(buf+i+1);
 		*(can_buf+3)=0;
 		*(can_buf+4)=*(buf+i+2);	/* 根据buf配置can_buf的必要位 */
-		if(slave[(i-1)/3] != 0 && *can_buf != 0)	/* 如果节点存在而且数据有意义，则分发数据 */
+		if(slave[(i-1)/3] != 0)	/* 如果节点存在，则分发数据 */
 		{
 			result += Can_Send_Msg(can_buf, CAN_buf_size, slave[(i-1)/3]);	/* 分发数据 */
 			DEBUG_USART_DMA_Tx_Start(can_buf, CAN_buf_size);	/* 给上位机反馈 */
 		}
-		delay_ms(5);
+		DelayForRespond;
 		clean_can_buf();
 	}
 	return result;
@@ -80,7 +81,7 @@ u8 CAN_distribute(u8 * buf, u8 len)
 void CAN_Call()
 {
 	u32 time_out = 10;
-	u8 temp_buf[6]={0};
+	u8 temp_buf[8]={0};
 	u32 count = 0;
 	int i = 0;
 	for(;i<slave_num_max;++i)
@@ -90,6 +91,9 @@ void CAN_Call()
 		if(count >= time_out || !(temp_buf[0]== 'R'&&temp_buf[1]== 'C')) /* 如果等待超时或者反馈出错则认为该节点不存在 */
 		{
 			slave[i] = 0;
+		}else
+		{
+			++slave_num;
 		}
 	}
 }
@@ -101,4 +105,46 @@ void clean_can_buf()
 	{
 		can_buf[i] = 0;
 	}
+}
+
+void clean_can_rec_buf()
+{
+	int i = 0;
+	for(;i<CAN_buf_size;++i)
+	{
+		can_rec_buf[i] = 0;
+	}
+}
+
+u8 home_all()
+{
+	u8 count;
+	u8 i;
+	u32 rec_history[slave_num_max] = {0};	/* 记录哪些节点已经发送过信息,避免重复发送的情况 */
+	u8 temp_buf[8]={0};
+	CAN_send_cmd(C_HOME,slave_all);
+	for(count=0;count<slave_num;)
+	{
+		if(Can_Receive_Msg(temp_buf))
+		{
+			if(temp_buf[0] == 'H' && slave[(temp_buf[1]-'0')] != 0)
+			{
+				if(rec_history[(temp_buf[1]-'0')] == 0)
+				{
+					rec_history[(temp_buf[1]-'0')] = 1;
+					++count;
+				}
+			}	
+		}			
+	}
+	for(i=0;i<slave_num_max;++i)
+	{
+		if(!(slave[i]*rec_history[i] == slave[i]))
+		{
+			clean_can_rec_buf();
+			return 0;
+		}
+	}
+	clean_can_rec_buf();
+	return 1;
 }

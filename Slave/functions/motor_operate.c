@@ -4,7 +4,8 @@ extern u8 home_flag;
 
 const float step_angle = 2 * pi/(motor_type*Micro_Step);
 const float timer_frep = 72000000/(psc_init+1);
-
+u8 Motor_status = 0;
+int current_position;
 u16 send_buf[send_buf_size];
 
 /**
@@ -24,7 +25,8 @@ void motor_init(DMA_Channel_TypeDef*DMA_CHx,u32 cpar,u32 cmar,u16 cndtr, u16 arr
 	motor_io_init();	/* 初始化IO */
 	DMA_Config(DMA_CHx, cpar, cmar, cndtr);	/* 初始化DMA */
 	TIM3_PWM_Init(arr, psc);	/* 初始化定时器 */
-	motor_enable();
+	motor_enable();					/* 使能电机 */
+	Motor_status = m_stop;	/* 初始化电机状态为停止状态 */
 }
 
 /**
@@ -131,14 +133,22 @@ void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, fl
 /**
  *@function 电机运行
  *@param void
- *@return void
+ *@return 
+ * 				1:成功发送
+ *				0:DMA忙碌
  */
-void motor_run()
+u8 motor_run()
 {
-	TIM3->ARR = 2;	/* 由于最后一项是0，所以在最后的时刻ARR会被清零，导致下一次启动无效。*/
-  DMA_Cmd(DMA1_Channel6, ENABLE);
-	TIM_Cmd(TIM3, ENABLE);  /* 使能TIM3 */
-	TIM3->EGR = 0x00000001;
+	if(Motor_status == m_stop || Motor_status == m_waiting)	/* 如果DMA已经发送完所有数据，则可以开始下一次发送 */
+	{
+		TIM3->ARR = 2;	/* 由于最后一项是0，所以在最后的时刻ARR会被清零，导致下一次启动无效。*/
+		DMA_Cmd(DMA1_Channel6, ENABLE);
+		TIM_Cmd(TIM3, ENABLE);  /* 使能TIM3 */
+		TIM3->EGR = 0x00000001;
+		Motor_status = m_moving;
+		return 1;
+	}
+	return 0;
 }
 
 /**
@@ -151,6 +161,7 @@ void motor_stop()
 	TIM_Cmd(TIM3,DISABLE);
 	DMA_Cmd(DMA1_Channel6,DISABLE);
 	DMA1_Channel6->CNDTR = 0;
+	Motor_status = m_stop;
 }
 
 /**
@@ -176,7 +187,32 @@ void motor_home()
 		/* 逐步向关节原点靠近 */
 		motor_move_ready(1, 0, pi, pi, 1, 1, send_buf);
 		motor_run();
+		while(isMotorStatus() != m_moving);	/* 如果电机不是处于运动状态，则可以继续发送脉冲 */
 	}
 	/* 限位开关被触发，电机停止 */
+	current_position = 0;
 	motor_stop();
+}
+
+/**
+ *@function 判断电机的物理状态
+ *@param void
+ *@return 
+ * 				m_moving 	0x01
+ * 				m_stop		0x02
+ * 				m_waiting 0x03
+ */
+u8 isMotorStatus()
+{
+	if(DMA_send_feedback(DMA1_Channel6) == 0 && Motor_status == m_moving)	/* 如果DMA已经发送完数据，而且电机仍然处于运行状态 */
+	{
+		Motor_status = m_stop;	/* 电机状态切换至停止 */
+		return m_stop;	/* 认为电机刚刚到达指定位置 */
+	}
+	if(DMA_send_feedback(DMA1_Channel6) == 0 && Motor_status == m_stop)
+	{
+		Motor_status = m_waiting;
+		return m_waiting;	/* 认为电机早已到达指定位置 */
+	}
+	return m_moving;	/* 否则认为电机尚未到达指定位置 */
 }

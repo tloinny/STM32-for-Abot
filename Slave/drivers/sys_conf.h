@@ -70,14 +70,14 @@
 /*
  *feedback
  */
-//#define c_receive_call			"RC"
-//#define c_motor_home 				"H0"
-//#define c_motor_ready 			"R0"
-//#define c_motor_arrive			"AR0"
-//#define c_motor_action			"AC0"
-//#define c_motor_stop				"S0"
-//#define c_motor_disable			"D0"
-//#define c_motor_enable			"E0"
+#define c_receive_call			"RC"
+#define c_motor_home 				"H0"
+#define c_motor_ready 			"R0"
+#define c_motor_arrive			"AR0"
+#define c_motor_action			"AC0"
+#define c_motor_stop				"S0"
+#define c_motor_disable			"D0"
+#define c_motor_enable			"E0"
 
 /*
  *ID
@@ -90,5 +90,12 @@
 #define slave_4			0x02000000	/* mask: 0x02000000 */	
 #define slave_5			0x04000000	/* mask: 0x04000000 */	
 #define slave_all 	0x07Ef0000
+
+/*
+ *Motor status
+ */
+#define m_moving 	0x01	/* 电机正在运动，处于运动状态 */
+#define m_stop		0x02	/* 电机刚刚停止运动，处于停止状态 */
+#define m_waiting 0x03	/* 电机早已停止运动，处于等待状态 */
 
 #endif

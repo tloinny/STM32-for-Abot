@@ -1,14 +1,5 @@
 #include "sys_conf.h"
 
-u8 c_receive_call[3] = 			"RC";
-u8 c_motor_home[3] =  				"H0";
-u8 c_motor_ready [3] = 			"R0";
-u8 c_motor_arrive[3] = 			"AR0";
-u8 c_motor_action[3] = 			"AC0";
-u8 c_motor_stop[3] = 				"S0";
-u8 c_motor_disable[3] = 			"D0";
-u8 c_motor_enable[3] = 			"E0";
-
 typedef struct motion_info
 {
 	float rad;
@@ -22,6 +13,7 @@ extern u16 send_buf[send_buf_size]; /* 脉冲发送缓存区 */
 int key = 0;
 int product_count = 1;	/* motion_info 生产者计数 */
 int consum_count = 1;	/* motion_info 消费者计数 */
+extern int current_position;
 float delta_rad = 0; 
 	
 u8 empty_flag = motion_buf_size;	/* 空位，初始值为motion_buf_size */
@@ -88,7 +80,7 @@ int main(void)
 						break;
 					case C_ACTION:	/* ACTION命令：开启DMA和定时器，电机立刻根据send_buf的内容运行 */
 						printf("recieve a\r\n");
-						motor_run();
+						if(motor_run())
 						CAN_send_feedback(c_motor_action);	/* 通知主机已经开始一次ACTION */
 						break;
 					case C_STOP:	/* STOP命令：电机立刻停止运动 */
@@ -107,10 +99,14 @@ int main(void)
 						motor_enable();
 						CAN_send_feedback(c_motor_enable);	/* 通知主机电机已经使能 */
 						break;
-					case C_CALL:
-						CAN_send_feedback(c_receive_call);
+					case C_CALL:					/* CALL命令：来自主机的呼叫 */
+						CAN_send_feedback(c_receive_call);	/* 响应主机呼叫，通知主机本节点存在 */
 						break;
 				}
+			}
+			if(isMotorStatus() == m_stop)
+			{
+				CAN_send_feedback(c_motor_arrive);	/* 通知主机电机已经到达指定位置 */
 			}
 		}
 }
