@@ -126,6 +126,7 @@ void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, fl
 			++i;
 		}
 		motor_dir(dir);	/* 配置电机运动方向 */
+		//DMA_Cmd(DMA1_Channel6, DISABLE);
 		DMA_SetCurrDataCounter(DMA1_Channel6,(u16)steps + 1);	/* 提前配置DMA的发送位数，但是暂时不使能DMA */
 		//DMA_Enable(DMA1_Channel6,(u16)steps + 1);
 }
@@ -139,7 +140,7 @@ void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, fl
  */
 u8 motor_run()
 {
-	if(Motor_status == m_stop || Motor_status == m_waiting)	/* 如果DMA已经发送完所有数据，则可以开始下一次发送 */
+	if(Motor_status != m_moving)	/* 只有电机不处于运动状态时才可以开始下一次发送 */
 	{
 		TIM3->ARR = 2;	/* 由于最后一项是0，所以在最后的时刻ARR会被清零，导致下一次启动无效。*/
 		DMA_Cmd(DMA1_Channel6, ENABLE);
@@ -185,9 +186,13 @@ void motor_home()
 	while(home_flag == 0)	/* 当限位开关没有被触发 */
 	{
 		/* 逐步向关节原点靠近 */
-		motor_move_ready(1, 0, pi, pi, 1, 1, send_buf);
+		motor_move_ready(1, 0, 5*pi, 5*pi, 1, 1, send_buf);
 		motor_run();
-		while(isMotorStatus() != m_moving);	/* 如果电机不是处于运动状态，则可以继续发送脉冲 */
+		while(1)	/* 如果电机不是处于运动状态，则可以继续发送脉冲 */
+		{
+			if(MotorStatus() != m_moving) break;
+		}
+		motor_stop();
 	}
 	/* 限位开关被触发，电机停止 */
 	current_position = 0;
@@ -202,14 +207,14 @@ void motor_home()
  * 				m_stop		0x02
  * 				m_waiting 0x03
  */
-u8 isMotorStatus()
+u8 MotorStatus()
 {
 	if(DMA_send_feedback(DMA1_Channel6) == 0 && Motor_status == m_moving)	/* 如果DMA已经发送完数据，而且电机仍然处于运行状态 */
 	{
 		Motor_status = m_stop;	/* 电机状态切换至停止 */
 		return m_stop;	/* 认为电机刚刚到达指定位置 */
 	}
-	if(DMA_send_feedback(DMA1_Channel6) == 0 && Motor_status == m_stop)
+	if(DMA_send_feedback(DMA1_Channel6) == 0 && (Motor_status == m_stop || Motor_status == m_waiting))
 	{
 		Motor_status = m_waiting;
 		return m_waiting;	/* 认为电机早已到达指定位置 */

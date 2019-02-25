@@ -51,19 +51,21 @@ int main(void)
 				(product_count == motion_buf_size)?(product_count = 1):(++product_count);
 				--empty_flag;	/* 获取一个空位 */
 				++full_flag;	/* 释放一个满位 */
+				CAN_send_feedback(c_get);
 			}else	if(key != 0 && *(rec_buf+3) != 0)/* 如果接收到的信息是命令信息 */
 			{
 				switch(*(rec_buf+3))	/* 匹配命令 */
 				{
 					case C_READY:	/* READY命令：预先配置好send_buf，等待ACTION命令 */
 						printf("recieve r \r\n");
-						if(empty_flag < motion_buf_size && full_flag != 0)
+						if(empty_flag < motion_buf_size && full_flag != 0 && MotorStatus() != m_moving)	/* 在运动信息缓存区可用而且电机不在运动状态时才能配置send_buf */
 						{
 							/* 消费者行为 */
 							
 							/* 计算与上一个位置的delta值 */
 							delta_rad = (motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000;
-							motor_move_ready(motor_type*Micro_Step*ratio*delta_rad, motion_buf[consum_count].dir, motion_buf[consum_count].speed_max, pi, 5, 5, send_buf);
+							motor_move_ready(motor_type*Micro_Step*ratio*(delta_rad/pi), motion_buf[consum_count].dir, 2*pi, pi, 5, 5, send_buf);
+							printf("config \r\n");
 							/* 用完清零上一位的数据 */
 							if(consum_count - 1 > 0)
 							{
@@ -104,7 +106,7 @@ int main(void)
 						break;
 				}
 			}
-			if(isMotorStatus() == m_stop)
+			if(MotorStatus() == m_stop)
 			{
 				CAN_send_feedback(c_motor_arrive);	/* 通知主机电机已经到达指定位置 */
 			}

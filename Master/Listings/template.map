@@ -12,9 +12,9 @@ Section Cross References
     main.o(i.main) refers to delay.o(i.delay_ms) for delay_ms
     main.o(i.main) refers to can_protocol.o(i.CAN_Call) for CAN_Call
     main.o(i.main) refers to can_protocol.o(i.home_all) for home_all
-    main.o(i.main) refers to dma_usart1_debug.o(i.DEBUG_USART_DMA_Tx_Start) for DEBUG_USART_DMA_Tx_Start
     main.o(i.main) refers to can_protocol.o(i.CAN_distribute) for CAN_distribute
     main.o(i.main) refers to stm32f10x_usart.o(i.USART_DMACmd) for USART_DMACmd
+    main.o(i.main) refers to can_protocol.o(i.CAN_send_cmd) for CAN_send_cmd
     main.o(i.main) refers to can.o(i.Can_Receive_Msg) for Can_Receive_Msg
     main.o(i.main) refers to dma_usart1_debug.o(.data) for DEBUG_Receive_length
     main.o(i.main) refers to dma_usart1_debug.o(.bss) for DEBUG_Rx_Buff
@@ -42,6 +42,8 @@ Section Cross References
     can_protocol.o(i.home_all) refers to can.o(i.Can_Receive_Msg) for Can_Receive_Msg
     can_protocol.o(i.home_all) refers to can_protocol.o(i.clean_can_rec_buf) for clean_can_rec_buf
     can_protocol.o(i.home_all) refers to can_protocol.o(.data) for slave
+    can_protocol.o(i.match_feedback) refers to can_protocol.o(i.CAN_send_cmd) for CAN_send_cmd
+    can_protocol.o(i.match_feedback) refers to can_protocol.o(.data) for arrive_list
     can.o(i.CAN_Mode_Init) refers to stm32f10x_rcc.o(i.RCC_APB2PeriphClockCmd) for RCC_APB2PeriphClockCmd
     can.o(i.CAN_Mode_Init) refers to stm32f10x_rcc.o(i.RCC_APB1PeriphClockCmd) for RCC_APB1PeriphClockCmd
     can.o(i.CAN_Mode_Init) refers to stm32f10x_gpio.o(i.GPIO_Init) for GPIO_Init
@@ -185,6 +187,7 @@ Section Cross References
 Removing Unused input sections from the image.
 
     Removing can_protocol.o(i.CAN_send_motion_info), (124 bytes).
+    Removing can_protocol.o(i.match_feedback), (312 bytes).
     Removing delay.o(i.delay_us), (76 bytes).
     Removing sys.o(.emb_text), (6 bytes).
     Removing sys.o(i.Ex_NVIC_Config), (160 bytes).
@@ -652,7 +655,7 @@ Removing Unused input sections from the image.
     Removing fmul.o(.text), (100 bytes).
     Removing ffixui.o(.text), (40 bytes).
 
-467 unused section(s) (total 18354 bytes) removed from the image.
+468 unused section(s) (total 18666 bytes) removed from the image.
 
 ==============================================================================
 
@@ -788,18 +791,18 @@ Image Symbol Table
     i.delay_init                             0x0800126c   Section        0  delay.o(i.delay_init)
     i.delay_ms                               0x080012b0   Section        0  delay.o(i.delay_ms)
     i.home_all                               0x080012fc   Section        0  can_protocol.o(i.home_all)
-    i.main                                   0x080013a4   Section        0  main.o(i.main)
-    .data                                    0x20000000   Section       41  can_protocol.o(.data)
-    .data                                    0x2000002a   Section        4  delay.o(.data)
-    fac_us                                   0x2000002a   Data           1  delay.o(.data)
-    fac_ms                                   0x2000002c   Data           2  delay.o(.data)
-    .data                                    0x2000002e   Section        1  dma_usart1_debug.o(.data)
-    .data                                    0x2000002f   Section       20  stm32f10x_rcc.o(.data)
-    APBAHBPrescTable                         0x2000002f   Data          16  stm32f10x_rcc.o(.data)
-    ADCPrescTable                            0x2000003f   Data           4  stm32f10x_rcc.o(.data)
-    .data                                    0x20000044   Section       20  system_stm32f10x.o(.data)
-    .bss                                     0x20000058   Section      100  dma_usart1_debug.o(.bss)
-    STACK                                    0x200000c0   Section     1024  startup_stm32f10x_md.o(STACK)
+    i.main                                   0x080013c4   Section        0  main.o(i.main)
+    .data                                    0x20000000   Section       55  can_protocol.o(.data)
+    .data                                    0x20000038   Section        4  delay.o(.data)
+    fac_us                                   0x20000038   Data           1  delay.o(.data)
+    fac_ms                                   0x2000003a   Data           2  delay.o(.data)
+    .data                                    0x2000003c   Section        1  dma_usart1_debug.o(.data)
+    .data                                    0x2000003d   Section       20  stm32f10x_rcc.o(.data)
+    APBAHBPrescTable                         0x2000003d   Data          16  stm32f10x_rcc.o(.data)
+    ADCPrescTable                            0x2000004d   Data           4  stm32f10x_rcc.o(.data)
+    .data                                    0x20000054   Section       20  system_stm32f10x.o(.data)
+    .bss                                     0x20000068   Section      100  dma_usart1_debug.o(.bss)
+    STACK                                    0x200000d0   Section     1024  startup_stm32f10x_md.o(STACK)
 
     Global Symbols
 
@@ -929,20 +932,24 @@ Image Symbol Table
     clean_can_rec_buf                        0x08001255   Thumb Code    18  can_protocol.o(i.clean_can_rec_buf)
     delay_init                               0x0800126d   Thumb Code    50  delay.o(i.delay_init)
     delay_ms                                 0x080012b1   Thumb Code    72  delay.o(i.delay_ms)
-    home_all                                 0x080012fd   Thumb Code   154  can_protocol.o(i.home_all)
-    main                                     0x080013a5   Thumb Code   218  main.o(i.main)
-    Region$$Table$$Base                      0x080014a0   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x080014c0   Number         0  anon$$obj.o(Region$$Table)
+    home_all                                 0x080012fd   Thumb Code   184  can_protocol.o(i.home_all)
+    main                                     0x080013c5   Thumb Code   218  main.o(i.main)
+    Region$$Table$$Base                      0x080014b8   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x080014d8   Number         0  anon$$obj.o(Region$$Table)
     can_buf                                  0x20000000   Data           8  can_protocol.o(.data)
     can_rec_buf                              0x20000008   Data           8  can_protocol.o(.data)
     slave                                    0x20000010   Data          24  can_protocol.o(.data)
     slave_num                                0x20000028   Data           1  can_protocol.o(.data)
-    DEBUG_Receive_length                     0x2000002e   Data           1  dma_usart1_debug.o(.data)
-    SystemCoreClock                          0x20000044   Data           4  system_stm32f10x.o(.data)
-    AHBPrescTable                            0x20000048   Data          16  system_stm32f10x.o(.data)
-    DEBUG_Tx_Buff                            0x20000058   Data          50  dma_usart1_debug.o(.bss)
-    DEBUG_Rx_Buff                            0x2000008a   Data          50  dma_usart1_debug.o(.bss)
-    __initial_sp                             0x200004c0   Data           0  startup_stm32f10x_md.o(STACK)
+    ready_num                                0x20000029   Data           1  can_protocol.o(.data)
+    ready_list                               0x2000002a   Data           6  can_protocol.o(.data)
+    arrive_num                               0x20000030   Data           1  can_protocol.o(.data)
+    arrive_list                              0x20000031   Data           6  can_protocol.o(.data)
+    DEBUG_Receive_length                     0x2000003c   Data           1  dma_usart1_debug.o(.data)
+    SystemCoreClock                          0x20000054   Data           4  system_stm32f10x.o(.data)
+    AHBPrescTable                            0x20000058   Data          16  system_stm32f10x.o(.data)
+    DEBUG_Tx_Buff                            0x20000068   Data          50  dma_usart1_debug.o(.bss)
+    DEBUG_Rx_Buff                            0x2000009a   Data          50  dma_usart1_debug.o(.bss)
+    __initial_sp                             0x200004d0   Data           0  startup_stm32f10x_md.o(STACK)
 
 
 
@@ -952,103 +959,103 @@ Memory Map of the image
 
   Image Entry point : 0x080000ed
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00001518, Max: 0x00010000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00001540, Max: 0x00010000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000014c0, Max: 0x00010000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000014d8, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x08000000   0x08000000   0x000000ec   Data   RO         3468    RESET               startup_stm32f10x_md.o
-    0x080000ec   0x080000ec   0x00000000   Code   RO         3473  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
-    0x080000ec   0x080000ec   0x00000004   Code   RO         3482    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
-    0x080000f0   0x080000f0   0x00000004   Code   RO         3485    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
-    0x080000f4   0x080000f4   0x00000000   Code   RO         3487    .ARM.Collect$$$$00000008  mc_w.l(entry7b.o)
-    0x080000f4   0x080000f4   0x00000000   Code   RO         3489    .ARM.Collect$$$$0000000A  mc_w.l(entry8b.o)
-    0x080000f4   0x080000f4   0x00000008   Code   RO         3490    .ARM.Collect$$$$0000000B  mc_w.l(entry9a.o)
-    0x080000fc   0x080000fc   0x00000000   Code   RO         3492    .ARM.Collect$$$$0000000D  mc_w.l(entry10a.o)
-    0x080000fc   0x080000fc   0x00000000   Code   RO         3494    .ARM.Collect$$$$0000000F  mc_w.l(entry11a.o)
-    0x080000fc   0x080000fc   0x00000004   Code   RO         3483    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
-    0x08000100   0x08000100   0x00000024   Code   RO         3469    .text               startup_stm32f10x_md.o
-    0x08000124   0x08000124   0x00000024   Code   RO         3476    .text               mc_w.l(memseta.o)
-    0x08000148   0x08000148   0x00000024   Code   RO         3497    .text               mc_w.l(init.o)
-    0x0800016c   0x0800016c   0x00000004   Code   RO          327    i.BusFault_Handler  stm32f10x_it.o
+    0x08000000   0x08000000   0x000000ec   Data   RO         3474    RESET               startup_stm32f10x_md.o
+    0x080000ec   0x080000ec   0x00000000   Code   RO         3479  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
+    0x080000ec   0x080000ec   0x00000004   Code   RO         3488    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
+    0x080000f0   0x080000f0   0x00000004   Code   RO         3491    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
+    0x080000f4   0x080000f4   0x00000000   Code   RO         3493    .ARM.Collect$$$$00000008  mc_w.l(entry7b.o)
+    0x080000f4   0x080000f4   0x00000000   Code   RO         3495    .ARM.Collect$$$$0000000A  mc_w.l(entry8b.o)
+    0x080000f4   0x080000f4   0x00000008   Code   RO         3496    .ARM.Collect$$$$0000000B  mc_w.l(entry9a.o)
+    0x080000fc   0x080000fc   0x00000000   Code   RO         3498    .ARM.Collect$$$$0000000D  mc_w.l(entry10a.o)
+    0x080000fc   0x080000fc   0x00000000   Code   RO         3500    .ARM.Collect$$$$0000000F  mc_w.l(entry11a.o)
+    0x080000fc   0x080000fc   0x00000004   Code   RO         3489    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
+    0x08000100   0x08000100   0x00000024   Code   RO         3475    .text               startup_stm32f10x_md.o
+    0x08000124   0x08000124   0x00000024   Code   RO         3482    .text               mc_w.l(memseta.o)
+    0x08000148   0x08000148   0x00000024   Code   RO         3503    .text               mc_w.l(init.o)
+    0x0800016c   0x0800016c   0x00000004   Code   RO          333    i.BusFault_Handler  stm32f10x_it.o
     0x08000170   0x08000170   0x0000006c   Code   RO          134    i.CAN_Call          can_protocol.o
-    0x080001dc   0x080001dc   0x00000108   Code   RO          797    i.CAN_FilterInit    stm32f10x_can.o
-    0x080002e4   0x080002e4   0x00000114   Code   RO          804    i.CAN_Init          stm32f10x_can.o
-    0x080003f8   0x080003f8   0x0000001e   Code   RO          805    i.CAN_MessagePending  stm32f10x_can.o
+    0x080001dc   0x080001dc   0x00000108   Code   RO          803    i.CAN_FilterInit    stm32f10x_can.o
+    0x080002e4   0x080002e4   0x00000114   Code   RO          810    i.CAN_Init          stm32f10x_can.o
+    0x080003f8   0x080003f8   0x0000001e   Code   RO          811    i.CAN_MessagePending  stm32f10x_can.o
     0x08000416   0x08000416   0x00000002   PAD
-    0x08000418   0x08000418   0x000000d8   Code   RO          185    i.CAN_Mode_Init     can.o
-    0x080004f0   0x080004f0   0x000000f0   Code   RO          807    i.CAN_Receive       stm32f10x_can.o
-    0x080005e0   0x080005e0   0x00000126   Code   RO          812    i.CAN_Transmit      stm32f10x_can.o
+    0x08000418   0x08000418   0x000000d8   Code   RO          191    i.CAN_Mode_Init     can.o
+    0x080004f0   0x080004f0   0x000000f0   Code   RO          813    i.CAN_Receive       stm32f10x_can.o
+    0x080005e0   0x080005e0   0x00000126   Code   RO          818    i.CAN_Transmit      stm32f10x_can.o
     0x08000706   0x08000706   0x00000002   PAD
-    0x08000708   0x08000708   0x000000a0   Code   RO          813    i.CAN_TransmitStatus  stm32f10x_can.o
+    0x08000708   0x08000708   0x000000a0   Code   RO          819    i.CAN_TransmitStatus  stm32f10x_can.o
     0x080007a8   0x080007a8   0x00000078   Code   RO          135    i.CAN_distribute    can_protocol.o
     0x08000820   0x08000820   0x00000034   Code   RO          136    i.CAN_send_cmd      can_protocol.o
-    0x08000854   0x08000854   0x0000003c   Code   RO          186    i.Can_Receive_Msg   can.o
-    0x08000890   0x08000890   0x00000078   Code   RO          187    i.Can_Send_Msg      can.o
-    0x08000908   0x08000908   0x000000a8   Code   RO          275    i.DEBUG_USART_Config  dma_usart1_debug.o
-    0x080009b0   0x080009b0   0x00000034   Code   RO          276    i.DEBUG_USART_DMA_Tx_Start  dma_usart1_debug.o
-    0x080009e4   0x080009e4   0x000000d4   Code   RO          277    i.DEBUG_USARTx_DMA_Config  dma_usart1_debug.o
-    0x08000ab8   0x08000ab8   0x00000024   Code   RO          278    i.DMA1_Channel4_IRQHandler  dma_usart1_debug.o
-    0x08000adc   0x08000adc   0x0000001c   Code   RO         1180    i.DMA_ClearFlag     stm32f10x_dma.o
-    0x08000af8   0x08000af8   0x00000018   Code   RO         1182    i.DMA_Cmd           stm32f10x_dma.o
-    0x08000b10   0x08000b10   0x0000002c   Code   RO         1185    i.DMA_GetFlagStatus  stm32f10x_dma.o
-    0x08000b3c   0x08000b3c   0x00000012   Code   RO         1187    i.DMA_ITConfig      stm32f10x_dma.o
-    0x08000b4e   0x08000b4e   0x0000003c   Code   RO         1188    i.DMA_Init          stm32f10x_dma.o
-    0x08000b8a   0x08000b8a   0x00000002   Code   RO          328    i.DebugMon_Handler  stm32f10x_it.o
-    0x08000b8c   0x08000b8c   0x00000116   Code   RO         1606    i.GPIO_Init         stm32f10x_gpio.o
-    0x08000ca2   0x08000ca2   0x00000004   Code   RO         1613    i.GPIO_ResetBits    stm32f10x_gpio.o
+    0x08000854   0x08000854   0x0000003c   Code   RO          192    i.Can_Receive_Msg   can.o
+    0x08000890   0x08000890   0x00000078   Code   RO          193    i.Can_Send_Msg      can.o
+    0x08000908   0x08000908   0x000000a8   Code   RO          281    i.DEBUG_USART_Config  dma_usart1_debug.o
+    0x080009b0   0x080009b0   0x00000034   Code   RO          282    i.DEBUG_USART_DMA_Tx_Start  dma_usart1_debug.o
+    0x080009e4   0x080009e4   0x000000d4   Code   RO          283    i.DEBUG_USARTx_DMA_Config  dma_usart1_debug.o
+    0x08000ab8   0x08000ab8   0x00000024   Code   RO          284    i.DMA1_Channel4_IRQHandler  dma_usart1_debug.o
+    0x08000adc   0x08000adc   0x0000001c   Code   RO         1186    i.DMA_ClearFlag     stm32f10x_dma.o
+    0x08000af8   0x08000af8   0x00000018   Code   RO         1188    i.DMA_Cmd           stm32f10x_dma.o
+    0x08000b10   0x08000b10   0x0000002c   Code   RO         1191    i.DMA_GetFlagStatus  stm32f10x_dma.o
+    0x08000b3c   0x08000b3c   0x00000012   Code   RO         1193    i.DMA_ITConfig      stm32f10x_dma.o
+    0x08000b4e   0x08000b4e   0x0000003c   Code   RO         1194    i.DMA_Init          stm32f10x_dma.o
+    0x08000b8a   0x08000b8a   0x00000002   Code   RO          334    i.DebugMon_Handler  stm32f10x_it.o
+    0x08000b8c   0x08000b8c   0x00000116   Code   RO         1612    i.GPIO_Init         stm32f10x_gpio.o
+    0x08000ca2   0x08000ca2   0x00000004   Code   RO         1619    i.GPIO_ResetBits    stm32f10x_gpio.o
     0x08000ca6   0x08000ca6   0x00000002   PAD
-    0x08000ca8   0x08000ca8   0x00000038   Code   RO          315    i.LED_Init          led.o
-    0x08000ce0   0x08000ce0   0x00000004   Code   RO          329    i.MemManage_Handler  stm32f10x_it.o
-    0x08000ce4   0x08000ce4   0x00000002   Code   RO          330    i.NMI_Handler       stm32f10x_it.o
+    0x08000ca8   0x08000ca8   0x00000038   Code   RO          321    i.LED_Init          led.o
+    0x08000ce0   0x08000ce0   0x00000004   Code   RO          335    i.MemManage_Handler  stm32f10x_it.o
+    0x08000ce4   0x08000ce4   0x00000002   Code   RO          336    i.NMI_Handler       stm32f10x_it.o
     0x08000ce6   0x08000ce6   0x00000002   PAD
-    0x08000ce8   0x08000ce8   0x00000070   Code   RO          455    i.NVIC_Init         misc.o
-    0x08000d58   0x08000d58   0x00000014   Code   RO          456    i.NVIC_PriorityGroupConfig  misc.o
-    0x08000d6c   0x08000d6c   0x00000020   Code   RO         2021    i.RCC_AHBPeriphClockCmd  stm32f10x_rcc.o
-    0x08000d8c   0x08000d8c   0x00000020   Code   RO         2022    i.RCC_APB1PeriphClockCmd  stm32f10x_rcc.o
-    0x08000dac   0x08000dac   0x00000020   Code   RO         2024    i.RCC_APB2PeriphClockCmd  stm32f10x_rcc.o
-    0x08000dcc   0x08000dcc   0x000000d4   Code   RO         2032    i.RCC_GetClocksFreq  stm32f10x_rcc.o
-    0x08000ea0   0x08000ea0   0x00000002   Code   RO          331    i.SVC_Handler       stm32f10x_it.o
-    0x08000ea2   0x08000ea2   0x00000008   Code   RO         3422    i.SetSysClock       system_stm32f10x.o
+    0x08000ce8   0x08000ce8   0x00000070   Code   RO          461    i.NVIC_Init         misc.o
+    0x08000d58   0x08000d58   0x00000014   Code   RO          462    i.NVIC_PriorityGroupConfig  misc.o
+    0x08000d6c   0x08000d6c   0x00000020   Code   RO         2027    i.RCC_AHBPeriphClockCmd  stm32f10x_rcc.o
+    0x08000d8c   0x08000d8c   0x00000020   Code   RO         2028    i.RCC_APB1PeriphClockCmd  stm32f10x_rcc.o
+    0x08000dac   0x08000dac   0x00000020   Code   RO         2030    i.RCC_APB2PeriphClockCmd  stm32f10x_rcc.o
+    0x08000dcc   0x08000dcc   0x000000d4   Code   RO         2038    i.RCC_GetClocksFreq  stm32f10x_rcc.o
+    0x08000ea0   0x08000ea0   0x00000002   Code   RO          337    i.SVC_Handler       stm32f10x_it.o
+    0x08000ea2   0x08000ea2   0x00000008   Code   RO         3428    i.SetSysClock       system_stm32f10x.o
     0x08000eaa   0x08000eaa   0x00000002   PAD
-    0x08000eac   0x08000eac   0x000000e0   Code   RO         3423    i.SetSysClockTo72   system_stm32f10x.o
-    0x08000f8c   0x08000f8c   0x00000028   Code   RO          459    i.SysTick_CLKSourceConfig  misc.o
-    0x08000fb4   0x08000fb4   0x00000060   Code   RO         3425    i.SystemInit        system_stm32f10x.o
-    0x08001014   0x08001014   0x00000064   Code   RO          279    i.USART1_IRQHandler  dma_usart1_debug.o
-    0x08001078   0x08001078   0x00000018   Code   RO         3192    i.USART_Cmd         stm32f10x_usart.o
-    0x08001090   0x08001090   0x00000012   Code   RO         3193    i.USART_DMACmd      stm32f10x_usart.o
-    0x080010a2   0x080010a2   0x00000054   Code   RO         3196    i.USART_GetITStatus  stm32f10x_usart.o
-    0x080010f6   0x080010f6   0x0000004a   Code   RO         3198    i.USART_ITConfig    stm32f10x_usart.o
-    0x08001140   0x08001140   0x000000d8   Code   RO         3199    i.USART_Init        stm32f10x_usart.o
-    0x08001218   0x08001218   0x00000004   Code   RO          332    i.UsageFault_Handler  stm32f10x_it.o
-    0x0800121c   0x0800121c   0x0000000e   Code   RO         3501    i.__scatterload_copy  mc_w.l(handlers.o)
-    0x0800122a   0x0800122a   0x00000002   Code   RO         3502    i.__scatterload_null  mc_w.l(handlers.o)
-    0x0800122c   0x0800122c   0x0000000e   Code   RO         3503    i.__scatterload_zeroinit  mc_w.l(handlers.o)
+    0x08000eac   0x08000eac   0x000000e0   Code   RO         3429    i.SetSysClockTo72   system_stm32f10x.o
+    0x08000f8c   0x08000f8c   0x00000028   Code   RO          465    i.SysTick_CLKSourceConfig  misc.o
+    0x08000fb4   0x08000fb4   0x00000060   Code   RO         3431    i.SystemInit        system_stm32f10x.o
+    0x08001014   0x08001014   0x00000064   Code   RO          285    i.USART1_IRQHandler  dma_usart1_debug.o
+    0x08001078   0x08001078   0x00000018   Code   RO         3198    i.USART_Cmd         stm32f10x_usart.o
+    0x08001090   0x08001090   0x00000012   Code   RO         3199    i.USART_DMACmd      stm32f10x_usart.o
+    0x080010a2   0x080010a2   0x00000054   Code   RO         3202    i.USART_GetITStatus  stm32f10x_usart.o
+    0x080010f6   0x080010f6   0x0000004a   Code   RO         3204    i.USART_ITConfig    stm32f10x_usart.o
+    0x08001140   0x08001140   0x000000d8   Code   RO         3205    i.USART_Init        stm32f10x_usart.o
+    0x08001218   0x08001218   0x00000004   Code   RO          338    i.UsageFault_Handler  stm32f10x_it.o
+    0x0800121c   0x0800121c   0x0000000e   Code   RO         3507    i.__scatterload_copy  mc_w.l(handlers.o)
+    0x0800122a   0x0800122a   0x00000002   Code   RO         3508    i.__scatterload_null  mc_w.l(handlers.o)
+    0x0800122c   0x0800122c   0x0000000e   Code   RO         3509    i.__scatterload_zeroinit  mc_w.l(handlers.o)
     0x0800123a   0x0800123a   0x00000002   PAD
     0x0800123c   0x0800123c   0x00000018   Code   RO          138    i.clean_can_buf     can_protocol.o
     0x08001254   0x08001254   0x00000018   Code   RO          139    i.clean_can_rec_buf  can_protocol.o
-    0x0800126c   0x0800126c   0x00000044   Code   RO          249    i.delay_init        delay.o
-    0x080012b0   0x080012b0   0x0000004c   Code   RO          250    i.delay_ms          delay.o
-    0x080012fc   0x080012fc   0x000000a8   Code   RO          140    i.home_all          can_protocol.o
-    0x080013a4   0x080013a4   0x000000fc   Code   RO            1    i.main              main.o
-    0x080014a0   0x080014a0   0x00000020   Data   RO         3499    Region$$Table       anon$$obj.o
+    0x0800126c   0x0800126c   0x00000044   Code   RO          255    i.delay_init        delay.o
+    0x080012b0   0x080012b0   0x0000004c   Code   RO          256    i.delay_ms          delay.o
+    0x080012fc   0x080012fc   0x000000c8   Code   RO          140    i.home_all          can_protocol.o
+    0x080013c4   0x080013c4   0x000000f4   Code   RO            1    i.main              main.o
+    0x080014b8   0x080014b8   0x00000020   Data   RO         3505    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x080014c0, Size: 0x000004c0, Max: 0x00005000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x080014d8, Size: 0x000004d0, Max: 0x00005000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x080014c0   0x00000029   Data   RW          141    .data               can_protocol.o
-    0x20000029   0x080014e9   0x00000001   PAD
-    0x2000002a   0x080014ea   0x00000004   Data   RW          252    .data               delay.o
-    0x2000002e   0x080014ee   0x00000001   Data   RW          281    .data               dma_usart1_debug.o
-    0x2000002f   0x080014ef   0x00000014   Data   RW         2052    .data               stm32f10x_rcc.o
-    0x20000043   0x08001503   0x00000001   PAD
-    0x20000044   0x08001504   0x00000014   Data   RW         3426    .data               system_stm32f10x.o
-    0x20000058        -       0x00000064   Zero   RW          280    .bss                dma_usart1_debug.o
-    0x200000bc   0x08001518   0x00000004   PAD
-    0x200000c0        -       0x00000400   Zero   RW         3466    STACK               startup_stm32f10x_md.o
+    0x20000000   0x080014d8   0x00000037   Data   RW          142    .data               can_protocol.o
+    0x20000037   0x0800150f   0x00000001   PAD
+    0x20000038   0x08001510   0x00000004   Data   RW          258    .data               delay.o
+    0x2000003c   0x08001514   0x00000001   Data   RW          287    .data               dma_usart1_debug.o
+    0x2000003d   0x08001515   0x00000014   Data   RW         2058    .data               stm32f10x_rcc.o
+    0x20000051   0x08001529   0x00000003   PAD
+    0x20000054   0x0800152c   0x00000014   Data   RW         3432    .data               system_stm32f10x.o
+    0x20000068        -       0x00000064   Zero   RW          286    .bss                dma_usart1_debug.o
+    0x200000cc   0x08001540   0x00000004   PAD
+    0x200000d0        -       0x00000400   Zero   RW         3472    STACK               startup_stm32f10x_md.o
 
 
 ==============================================================================
@@ -1059,11 +1066,11 @@ Image component sizes
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
        396         16          0          0          0     214413   can.o
-       496         50          0         41          0       4212   can_protocol.o
+       528         52          0         55          0       4416   can_protocol.o
        144         22          0          4          0       1132   delay.o
        568         56          0          1        100       3588   dma_usart1_debug.o
         56          6          0          0          0        459   led.o
-       252         34          0          0          0     249967   main.o
+       244         26          0          0          0     249955   main.o
        172         22          0          0          0       2185   misc.o
         36          8        236          0       1024        800   startup_stm32f10x_md.o
       1264         28          0          0          0       5351   stm32f10x_can.o
@@ -1076,9 +1083,9 @@ Image component sizes
        328         28          0         20          0       2409   system_stm32f10x.o
 
     ----------------------------------------------------------------------
-      4920        332        268         88       1128     504695   Object Totals
+      4944        326        268        104       1128     504887   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        10          0          0          2          4          0   (incl. Padding)
+        10          0          0          4          4          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -1116,15 +1123,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      5044        348        268         88       1128     502527   Grand Totals
-      5044        348        268         88       1128     502527   ELF Image Totals
-      5044        348        268         88          0          0   ROM Totals
+      5068        342        268        104       1128     502719   Grand Totals
+      5068        342        268        104       1128     502719   ELF Image Totals
+      5068        342        268        104          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 5312 (   5.19kB)
-    Total RW  Size (RW Data + ZI Data)              1216 (   1.19kB)
-    Total ROM Size (Code + RO Data + RW Data)       5400 (   5.27kB)
+    Total RO  Size (Code + RO Data)                 5336 (   5.21kB)
+    Total RW  Size (RW Data + ZI Data)              1232 (   1.20kB)
+    Total ROM Size (Code + RO Data + RW Data)       5440 (   5.31kB)
 
 ==============================================================================
 

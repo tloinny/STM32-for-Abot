@@ -15,17 +15,12 @@ int main(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 	LED_Init();
 	DEBUG_USARTx_DMA_Config();
-//uart_init(115200);
 	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_Normal);
 	LED0 = 1;
 	delay_ms(1000);
 	CAN_Call();
 	delay_ms(1000);
-	if(!home_all())	/* 所有关节寻找原点 */
-	{
-		while(1)
-		DEBUG_USART_DMA_Tx_Start("error",8);
-	}else{DEBUG_USART_DMA_Tx_Start("OK",2);}
+	home_all();	/* 所有关节寻找原点 */
 	while(1)
 		{
 			if(DEBUG_Receive_length > 0) /* 接收完一帧数据,进行数据分发 */
@@ -34,29 +29,34 @@ int main(void)
 				CAN_distribute(DEBUG_Rx_Buff, DEBUG_Receive_length);
 				DEBUG_Receive_length = 0;
 				DEBUG_RX_Start;//开启下一次接收
+				CAN_send_cmd(C_READY,slave_all);	/* 通知所有节点做好准备工作 */
+				DelayForRespond;
+				CAN_send_cmd(C_ACTION,slave_all);
 			}
-			DelayForRespond;
 			if(Can_Receive_Msg(can_rec_buf) != 0)
 			{
 				switch(can_rec_buf[0])
 				{
-						case 'R':
+					case 'G':
+						
+						break;
+					case 'R':
 								
-							break;
-						case 'H':
+						break;
+					case 'H':
 
-							break;
-						case 'A':
+						break;
+					case 'A':
 
-							break;
-						case 'S':
+						break;
+					case 'S':
 
-							break;
-						case 'D':
+						break;
+					case 'D':
 							
-							break;
-						case 'E':
-							break;
+						break;
+					case 'E':
+						break;
 				}
 			}
 		}

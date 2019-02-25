@@ -13,5 +13,5 @@ void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, fl
 u8 motor_run(void);
 void motor_stop(void);
 void motor_home(void);
-u8 isMotorStatus(void);
+u8 MotorStatus(void);
 #endif

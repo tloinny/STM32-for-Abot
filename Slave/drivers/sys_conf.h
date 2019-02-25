@@ -70,6 +70,7 @@
 /*
  *feedback
  */
+#define c_get								"G0"
 #define c_receive_call			"RC"
 #define c_motor_home 				"H0"
 #define c_motor_ready 			"R0"

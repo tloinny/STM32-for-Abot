@@ -4,6 +4,10 @@ u8 can_buf[CAN_buf_size] = {0};
 u8 can_rec_buf[CAN_buf_size] = {0};
 u32 slave[slave_num_max] = {slave_0,slave_1,slave_2,slave_3,slave_4,slave_5};
 u8 slave_num = 0;
+u8 ready_num = 0;
+u8 ready_list[slave_num_max] = {0};
+u8 arrive_num = 0;
+u8 arrive_list[slave_num_max] = {0};
 
 /**
  *@function CAN向从机发送速度信息和弧度制的角度信息
@@ -78,6 +82,11 @@ u8 CAN_distribute(u8 * buf, u8 len)
 	return result;
 }
 
+/**
+ *@function CAN向从机进行呼叫，确定哪些节点是存在于总线上的，最终填写在slav[]中。不存在的节点ID置零
+ *@param void
+ *@return void
+ */
 void CAN_Call()
 {
 	u32 time_out = 10;
@@ -87,17 +96,22 @@ void CAN_Call()
 	for(;i<slave_num_max;++i)
 	{
 		CAN_send_cmd(C_CALL,slave[i]);
-		for(;(Can_Receive_Msg(temp_buf) == 0) && count < time_out; ++count,delay_ms(6));
+		for(;(Can_Receive_Msg(temp_buf) == 0) && count < time_out; ++count,delay_ms(6));	/* 阻塞性等待从机回复 */
 		if(count >= time_out || !(temp_buf[0]== 'R'&&temp_buf[1]== 'C')) /* 如果等待超时或者反馈出错则认为该节点不存在 */
 		{
 			slave[i] = 0;
 		}else
 		{
-			++slave_num;
+			++slave_num;	/* 计算可用节点数 */
 		}
 	}
 }
 
+/**
+ *@function 清除can_buf中的数据
+ *@param void
+ *@return void
+ */
 void clean_can_buf()
 {
 	int i = 0;
@@ -107,6 +121,11 @@ void clean_can_buf()
 	}
 }
 
+/**
+ *@function 清除can_rec_buf中的数据
+ *@param void
+ *@return void
+ */
 void clean_can_rec_buf()
 {
 	int i = 0;
@@ -116,6 +135,13 @@ void clean_can_rec_buf()
 	}
 }
 
+/**
+ *@function 使所有节点寻找关节原点
+ *@param void
+ *@return 
+ *				1：所有原点寻找成功
+ *				0：出错
+ */
 u8 home_all()
 {
 	u8 count;
@@ -123,28 +149,96 @@ u8 home_all()
 	u32 rec_history[slave_num_max] = {0};	/* 记录哪些节点已经发送过信息,避免重复发送的情况 */
 	u8 temp_buf[8]={0};
 	CAN_send_cmd(C_HOME,slave_all);
-	for(count=0;count<slave_num;)
+	for(count=0;count<slave_num;)	/* 阻塞性等待回复 */
 	{
 		if(Can_Receive_Msg(temp_buf))
 		{
-			if(temp_buf[0] == 'H' && slave[(temp_buf[1]-'0')] != 0)
+			if(temp_buf[0] == 'H' && (temp_buf[1]-'0')>=0 && (temp_buf[1]-'0')<slave_num_max)
 			{
-				if(rec_history[(temp_buf[1]-'0')] == 0)
+				if(rec_history[(temp_buf[1]-'0')] == 0 && slave[(temp_buf[1]-'0')] != 0)	/* 防止重复 */
 				{
 					rec_history[(temp_buf[1]-'0')] = 1;
 					++count;
+					clean_can_rec_buf();
 				}
 			}	
 		}			
 	}
-	for(i=0;i<slave_num_max;++i)
+	for(i=0;i<slave_num_max;++i)	/* 判断是否所有可用节点都已经寻找到原点 */
 	{
-		if(!(slave[i]*rec_history[i] == slave[i]))
+		if(slave[i]*rec_history[i] != slave[i])
 		{
 			clean_can_rec_buf();
 			return 0;
+		}else
+		{
+			arrive_list[i] = rec_history[i];	/* 标志为到达指定位置 */
 		}
 	}
-	clean_can_rec_buf();
 	return 1;
+}
+
+/**
+ *@function 匹配来自从机的反馈信息，并且做出反应
+ *@param void
+ *@return void
+ */
+void match_feedback(u8* feedback)
+{
+	u8 i;
+	u8 result = 0;
+	switch(*feedback)
+	{
+		case 'G':	/* c_get:表示某个从机已经接收到运动信息 */
+				if((*(feedback+1)-'0')>=0 && (*(feedback+1)-'0')<slave_num_max)
+				{
+					if(arrive_list[(*(feedback+1)-'0')] == 1)	/* 只有当从机已经到达指定位置时才能进行下一次运动的准备工作 */
+						CAN_send_cmd(C_READY,slave[*(feedback+1)-'0']);	/* 通知该从机做好准备工作 */
+				}
+			break;
+		case 'R':	/* c_motor_ready:表示某个从机已经做好准备工作 */
+				if((*(feedback+1)-'0')>=0 && (*(feedback+1)-'0')<slave_num_max)
+				{
+					if(ready_list[(*(feedback+1)-'0')] == 0)
+					{
+						ready_list[(*(feedback+1)-'0')] = 1;	/* 标志为已准备完成 */
+						++ready_num;
+					}
+				}
+				for(i=0;i<slave_num_max && ready_num == slave_num;++i) /* 当所有有效节点都完成准备工作 */
+				{
+					result = 1 && (slave[i]*ready_list[i] == slave[i]);	/* 防止一些在未知原因下进入总线的节点对此产生干扰 */
+				}
+				if(result) CAN_send_cmd(C_ACTION,slave_all);	/* 通知所有从机开始驱动电机 */
+			break;
+		case 'H':	/* c_motor_home:表示某个从机的电机已经到达原点位置 */
+			break;
+		case 'A':	/* c_motor_arrive或者c_motor_action */
+				switch(*(feedback+1))
+				{
+					case 'R':	/* c_motor_arrive */
+						if((*(feedback+1)-'0')>=0 && (*(feedback+1)-'0')<slave_num_max)
+						{
+							if(arrive_list[(*(feedback+1)-'0')] == 0)
+							{
+								arrive_list[(*(feedback+1)-'0')] = 1;	/* 标志为已到达指定位置 */
+								++arrive_num;
+							}
+						}
+						break;
+					case 'C':	/* c_motor_action */
+						break;
+					default:
+						break;
+				}
+			break;
+		case 'S':	/* c_motor_stop:表示某个从机的电机已经停止 */
+			break;
+		case 'D':	/* c_motor_disable:表示某个从机的电机已经失能 */								
+			break;
+		case 'E':	/* c_motor_ensable:表示某个从机的电机已经使能 */
+			break;
+		default:
+			break;		
+	}
 }
