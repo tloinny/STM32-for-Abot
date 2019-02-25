@@ -74,9 +74,9 @@ void motor_dir(u8 dir)
  */
 void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, float acc_accel, float acc_decel, u16 * S_buf)
 {
-	u16 max_steps_lim = (u16)ceil(((speed_max+speed_init)*(speed_max-speed_init))/ (2*step_angle*acc_accel));	/* the number of steps needed to accelerate to the desired speed */
-	u16 acc_lim = (u16)ceil(steps * (acc_decel/(acc_accel+acc_decel)));		/* the number of steps before deceleration starts */
-	u16 arr_max = (u16)(step_angle* timer_frep /speed_max);
+	u16 max_steps_lim = (u16)(0.5+((speed_max+speed_init)*(speed_max-speed_init))/ (2*step_angle*acc_accel));	/* the number of steps needed to accelerate to the desired speed */
+	u16 acc_lim = (u16)(0.5+(steps * (acc_decel/(acc_accel+acc_decel))));		/* the number of steps before deceleration starts */
+	u16 arr_max = (u16)((0.5+(step_angle * timer_frep /speed_max)));
 	u16 accel_steps = 0;
 	u16 *decel_steps = (u16*)malloc(sizeof(u16));
 	u16 *temp = (u16*)malloc(sizeof(u16));
@@ -95,12 +95,13 @@ void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, fl
 			accel_steps = acc_lim;
 			free(decel_steps);
 		}
+		steps = (u16)(0.5+steps);
 		while(!(i > steps))
 		{
-			if(i == 0) *(S_buf + i) = (u16)(timer_frep* sqrt(step_angle/acc_accel) * 0.676);
+			if(i == 0) *(S_buf + i) = (u16)(0.5 + timer_frep* sqrt(step_angle/acc_accel) * 0.676);
 			if(i > 0 && i < accel_steps)	/* 加速段 */
 			{
-				*temp = (u16)ceil(*(S_buf + i - 1) - ((*(S_buf + i - 1) * 2 + compensation) / (4 * i - 1)));
+				*temp = (u16)(0.5+(*(S_buf + i - 1) - ((*(S_buf + i - 1) * 2 + compensation) / (4 * i - 1))));
 				if(*temp != 0)
 				*(S_buf + i) = (*temp);
 				else *(S_buf + i) = 2;
@@ -112,7 +113,7 @@ void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, fl
 			}
 			if(i >= accel_steps + const_steps && i < steps)	/* 减速段 */
 			{
-				*temp = (u16)ceil (*(S_buf + (int)steps - i - 1) - (( *(S_buf + (int)steps - i - 1) * 2 + compensation) / (4 * i - 1)));
+				*temp = (u16)(0.5+(*(S_buf + (int)steps - i - 1) - (( *(S_buf + (int)steps - i - 1) * 2 + compensation) / (4 * i - 1))));
 				if(*temp != 0)
 				*(S_buf + i) = (*temp);
 				else *(S_buf + i) = 2;
@@ -126,7 +127,7 @@ void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, fl
 			++i;
 		}
 		motor_dir(dir);	/* 配置电机运动方向 */
-		//DMA_Cmd(DMA1_Channel6, DISABLE);
+		DMA_Cmd(DMA1_Channel6, DISABLE);
 		DMA_SetCurrDataCounter(DMA1_Channel6,(u16)steps + 1);	/* 提前配置DMA的发送位数，但是暂时不使能DMA */
 		//DMA_Enable(DMA1_Channel6,(u16)steps + 1);
 }

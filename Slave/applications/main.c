@@ -63,8 +63,8 @@ int main(void)
 							/* 消费者行为 */
 							
 							/* 计算与上一个位置的delta值 */
-							delta_rad = (motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000;
-							motor_move_ready(motor_type*Micro_Step*ratio*(delta_rad/pi), motion_buf[consum_count].dir, 2*pi, pi, 5, 5, send_buf);
+							delta_rad = fabs((motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000);
+							motor_move_ready(motor_type*Micro_Step*ratio*(delta_rad/pi/2), motion_buf[consum_count].dir, 5*pi, pi, 0.1, 0.1, send_buf);
 							printf("config \r\n");
 							/* 用完清零上一位的数据 */
 							if(consum_count - 1 > 0)
@@ -82,8 +82,10 @@ int main(void)
 						break;
 					case C_ACTION:	/* ACTION命令：开启DMA和定时器，电机立刻根据send_buf的内容运行 */
 						printf("recieve a\r\n");
-						if(motor_run())
-						CAN_send_feedback(c_motor_action);	/* 通知主机已经开始一次ACTION */
+						if(motor_run()==1)
+						{
+							CAN_send_feedback(c_motor_action);	/* 通知主机已经开始一次ACTION */
+						}
 						break;
 					case C_STOP:	/* STOP命令：电机立刻停止运动 */
 						motor_stop();
