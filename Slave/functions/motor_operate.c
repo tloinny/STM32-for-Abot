@@ -70,10 +70,13 @@ void motor_dir(u8 dir)
  *				acc_accel:加速度
  *				acc_decel:减速度
  *				S_buf:计算结果缓存区
- *@return void
+ *@return
+ *				1:成功配置send_buf
+ *				0:配置过程出现问题
  */
-void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, float acc_accel, float acc_decel, u16 * S_buf)
+u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, float acc_accel, float acc_decel, u16 * S_buf)
 {
+	if(((u16)(steps+1.5))>send_buf_size) return 0;	/* 检查边界 */
 	u16 max_steps_lim = (u16)(0.5+((speed_max+speed_init)*(speed_max-speed_init))/ (2*step_angle*acc_accel));	/* the number of steps needed to accelerate to the desired speed */
 	u16 acc_lim = (u16)(0.5+(steps * (acc_decel/(acc_accel+acc_decel))));		/* the number of steps before deceleration starts */
 	u16 arr_max = (u16)((0.5+(step_angle * timer_frep /speed_max)));
@@ -127,9 +130,10 @@ void motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, fl
 			++i;
 		}
 		motor_dir(dir);	/* 配置电机运动方向 */
-		DMA_Cmd(DMA1_Channel6, DISABLE);
+		DMA_Cmd(DMA1_Channel6, DISABLE);	/* 修改DMA配置之前需确保DMA已经失能，否则无法修改配置 */
 		DMA_SetCurrDataCounter(DMA1_Channel6,(u16)steps + 1);	/* 提前配置DMA的发送位数，但是暂时不使能DMA */
 		//DMA_Enable(DMA1_Channel6,(u16)steps + 1);
+		return 1;
 }
 
 /**
@@ -147,7 +151,7 @@ u8 motor_run()
 		DMA_Cmd(DMA1_Channel6, ENABLE);
 		TIM_Cmd(TIM3, ENABLE);  /* 使能TIM3 */
 		TIM3->EGR = 0x00000001;
-		Motor_status = m_moving;
+		Motor_status = m_moving;	/* 切换至运行状态 */
 		return 1;
 	}
 	return 0;
@@ -187,7 +191,7 @@ void motor_home()
 	while(home_flag == 0)	/* 当限位开关没有被触发 */
 	{
 		/* 逐步向关节原点靠近 */
-		motor_move_ready(1, 0, 5*pi, 5*pi, 1, 1, send_buf);
+		motor_move_ready(1, 0, pi, pi, 1, 1, send_buf);
 		motor_run();
 		while(1)	/* 如果电机不是处于运动状态，则可以继续发送脉冲 */
 		{
