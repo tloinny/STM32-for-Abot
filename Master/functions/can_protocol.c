@@ -96,7 +96,7 @@ void CAN_Call()
 	for(;i<slave_num_max;++i)
 	{
 		CAN_send_cmd(C_CALL,slave[i]);
-		for(;(Can_Receive_Msg(temp_buf) == 0) && count < time_out; ++count,delay_ms(6));	/* 阻塞性等待从机回复 */
+		for(count=0;(Can_Receive_Msg(temp_buf) == 0) && count < time_out; ++count,delay_ms(6));	/* 阻塞性等待从机回复 */
 		if(count >= time_out || !(temp_buf[0]== 'R'&&temp_buf[1]== 'C')) /* 如果等待超时或者反馈出错则认为该节点不存在 */
 		{
 			slave[i] = 0;

@@ -21,6 +21,8 @@
 #include "exti.h"
 #include "led.h"
 
+#define SLAVE3
+
 /**
  *@description define 
  *在这里配置用户代码中的define值
@@ -70,6 +72,7 @@
 /*
  *feedback
  */
+#ifdef SLAVE0
 #define c_motion_request		"Q0"
 #define c_receive_call			"RC"
 #define c_motor_home 				"H0"
@@ -79,6 +82,43 @@
 #define c_motor_stop				"S0"
 #define c_motor_disable			"D0"
 #define c_motor_enable			"E0"
+#endif
+
+#ifdef SLAVE1
+#define c_motion_request		"Q1"
+#define c_receive_call			"RC"
+#define c_motor_home 				"H1"
+#define c_motor_ready 			"R1"
+#define c_motor_arrive			"AR1"
+#define c_motor_action			"AC1"
+#define c_motor_stop				"S1"
+#define c_motor_disable			"D1"
+#define c_motor_enable			"E1"
+#endif
+
+#ifdef SLAVE2
+#define c_motion_request		"Q2"
+#define c_receive_call			"RC"
+#define c_motor_home 				"H2"
+#define c_motor_ready 			"R2"
+#define c_motor_arrive			"AR2"
+#define c_motor_action			"AC2"
+#define c_motor_stop				"S2"
+#define c_motor_disable			"D2"
+#define c_motor_enable			"E2"
+#endif
+
+#ifdef SLAVE3
+#define c_motion_request		"Q3"
+#define c_receive_call			"RC"
+#define c_motor_home 				"H3"
+#define c_motor_ready 			"R3"
+#define c_motor_arrive			"AR3"
+#define c_motor_action			"AC3"
+#define c_motor_stop				"S3"
+#define c_motor_disable			"D3"
+#define c_motor_enable			"E3"
+#endif
 
 /*
  *ID
@@ -88,8 +128,8 @@
 #define slave_1 		0x00400000	/* mask: 0x00400000 */
 #define slave_2 		0x00800000	/* mask: 0x00800000 */
 #define slave_3 		0x01000000	/* mask: 0x01000000 */
-#define slave_4			0x02000000	/* mask: 0x02000000 */	
-#define slave_5			0x04000000	/* mask: 0x04000000 */	
+//#define slave_4			0x02000000	/* mask: 0x02000000 */	
+//#define slave_5			0x04000000	/* mask: 0x04000000 */	
 #define slave_all 	0x07Ef0000
 
 /*

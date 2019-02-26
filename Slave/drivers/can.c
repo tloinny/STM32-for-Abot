@@ -56,10 +56,35 @@ u8 CAN_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode)
 	CAN_FilterInitStructure.CAN_FilterNumber=0;	/* 过滤器0 */
 	CAN_FilterInitStructure.CAN_FilterMode=CAN_FilterMode_IdMask; /* 屏蔽位宽模式 */
 	CAN_FilterInitStructure.CAN_FilterScale=CAN_FilterScale_32bit; 	/* 32位宽 */ 
+	
+	#ifdef SLAVE0
 	CAN_FilterInitStructure.CAN_FilterIdHigh=0x0020;	/* 32位ID */
 	CAN_FilterInitStructure.CAN_FilterIdLow=0x0000;
 	CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0020;	/* 32位MASK */
 	CAN_FilterInitStructure.CAN_FilterMaskIdLow=0x0000;
+	#endif
+	
+	#ifdef SLAVE1
+	CAN_FilterInitStructure.CAN_FilterIdHigh=0x0040;	/* 32位ID */
+	CAN_FilterInitStructure.CAN_FilterIdLow=0x0000;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0040;	/* 32位MASK */
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow=0x0000;
+	#endif
+	
+	#ifdef SLAVE2
+	CAN_FilterInitStructure.CAN_FilterIdHigh=0x0080;	/* 32位ID */
+	CAN_FilterInitStructure.CAN_FilterIdLow=0x0000;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0080;	/* 32位MASK */
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow=0x0000;
+	#endif
+	
+	#ifdef SLAVE3
+	CAN_FilterInitStructure.CAN_FilterIdHigh=0x0100;	/* 32位ID */
+	CAN_FilterInitStructure.CAN_FilterIdLow=0x0000;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh=0x0100;	/* 32位MASK */
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow=0x0000;
+	#endif
+	
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_Filter_FIFO0;	/* 过滤器关联到FIFO0 */
 	CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;	/* 激活过滤器 */
 
