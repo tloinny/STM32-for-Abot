@@ -33,32 +33,6 @@ int main(void)
 				DelayForRespond;
 				CAN_send_cmd(C_ACTION,slave_all);
 			}
-			if(Can_Receive_Msg(can_rec_buf) != 0)
-			{
-				switch(can_rec_buf[0])
-				{
-					case 'G':
-						
-						break;
-					case 'R':
-								
-						break;
-					case 'H':
-
-						break;
-					case 'A':
-
-						break;
-					case 'S':
-
-						break;
-					case 'D':
-							
-						break;
-					case 'E':
-						break;
-				}
-			}
 		}
 }
 

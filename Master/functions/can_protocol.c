@@ -189,7 +189,7 @@ void match_feedback(u8* feedback)
 	u8 result = 0;
 	switch(*feedback)
 	{
-		case 'G':	/* c_get:表示某个从机已经接收到运动信息 */
+		case 'Q':	/* c_motion_request:表示某个从机发来运动请求 */
 				if((*(feedback+1)-'0')>=0 && (*(feedback+1)-'0')<slave_num_max)
 				{
 					if(arrive_list[(*(feedback+1)-'0')] == 1)	/* 只有当从机已经到达指定位置时才能进行下一次运动的准备工作 */
@@ -227,6 +227,14 @@ void match_feedback(u8* feedback)
 						}
 						break;
 					case 'C':	/* c_motor_action */
+						if((*(feedback+1)-'0')>=0 && (*(feedback+1)-'0')<slave_num_max)
+						{
+							if(arrive_list[(*(feedback+1)-'0')] == 0)
+							{
+								arrive_list[(*(feedback+1)-'0')] = 0;	/* 标志为未到达指定位置 */
+								--arrive_num;
+							}
+						}
 						break;
 					default:
 						break;

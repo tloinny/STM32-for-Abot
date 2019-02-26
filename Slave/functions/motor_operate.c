@@ -6,6 +6,9 @@ const float step_angle = 2 * pi/(motor_type*Micro_Step);
 const float timer_frep = 72000000/(psc_init+1);
 u8 Motor_status = 0;
 int current_position;
+int motion_dir = 1;
+u32 pre_cndtr = 0;
+u32 this_cndtr = 0;
 u16 send_buf[send_buf_size];
 
 /**
@@ -26,7 +29,7 @@ void motor_init(DMA_Channel_TypeDef*DMA_CHx,u32 cpar,u32 cmar,u16 cndtr, u16 arr
 	DMA_Config(DMA_CHx, cpar, cmar, cndtr);	/* 初始化DMA */
 	TIM3_PWM_Init(arr, psc);	/* 初始化定时器 */
 	motor_enable();					/* 使能电机 */
-	Motor_status = m_stop;	/* 初始化电机状态为停止状态 */
+	Motor_status = m_waiting;	/* 初始化电机状态为等待状态 */
 }
 
 /**
@@ -37,6 +40,7 @@ void motor_init(DMA_Channel_TypeDef*DMA_CHx,u32 cpar,u32 cmar,u16 cndtr, u16 arr
 void motor_enable()
 {
 	GPIO_ResetBits(GPIOB, GPIO_Pin_4);	
+	Motor_status = m_waiting;
 }
 
 /**
@@ -47,6 +51,7 @@ void motor_enable()
 void motor_disable()
 {
 	GPIO_SetBits(GPIOB, GPIO_Pin_4);
+	Motor_status = m_waiting;
 }
 
 /**
@@ -57,7 +62,7 @@ void motor_disable()
  */
 void motor_dir(u8 dir)
 {
-	dir ? GPIO_SetBits(GPIOB, GPIO_Pin_3) : GPIO_ResetBits(GPIOB, GPIO_Pin_3);
+	dir ? (GPIO_SetBits(GPIOB, GPIO_Pin_3),motion_dir = 1) : (GPIO_ResetBits(GPIOB, GPIO_Pin_3),motion_dir = -1);
 }
 
 /**
@@ -131,7 +136,8 @@ u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, floa
 		}
 		motor_dir(dir);	/* 配置电机运动方向 */
 		DMA_Cmd(DMA1_Channel6, DISABLE);	/* 修改DMA配置之前需确保DMA已经失能，否则无法修改配置 */
-		DMA_SetCurrDataCounter(DMA1_Channel6,(u16)steps + 1);	/* 提前配置DMA的发送位数，但是暂时不使能DMA */
+		steps>0 ? DMA_SetCurrDataCounter(DMA1_Channel6,(u16)steps + 1) : DMA_SetCurrDataCounter(DMA1_Channel6,0);	/* 提前配置DMA的发送位数，但是暂时不使能DMA */
+		pre_cndtr = (u32)steps;
 		//DMA_Enable(DMA1_Channel6,(u16)steps + 1);
 		return 1;
 }
@@ -141,11 +147,11 @@ u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, floa
  *@param void
  *@return 
  * 				1:成功发送
- *				0:DMA忙碌
+ *				0:尚未发送
  */
 u8 motor_run()
 {
-	if(Motor_status != m_moving)	/* 只有电机不处于运动状态时才可以开始下一次发送 */
+	if(Motor_status != m_moving && send_buf[0] != 0)	/* 只有电机不处于运动状态而且运动步数大于时才开始下一次发送 */
 	{
 		TIM3->ARR = 2;	/* 由于最后一项是0，所以在最后的时刻ARR会被清零，导致下一次启动无效。*/
 		DMA_Cmd(DMA1_Channel6, ENABLE);
@@ -214,12 +220,17 @@ void motor_home()
  */
 u8 MotorStatus()
 {
-	if(DMA_send_feedback(DMA1_Channel6) == 0 && Motor_status == m_moving)	/* 如果DMA已经发送完数据，而且电机仍然处于运行状态 */
+	this_cndtr = DMA_send_feedback(DMA1_Channel6);
+	current_position = current_position + motion_dir*(pre_cndtr-this_cndtr);	/* 更新当前位置 */
+//	printf("pos:%d\r\n",current_position);
+	pre_cndtr = this_cndtr;
+	if(this_cndtr == 0 && Motor_status == m_moving)	/* 如果DMA已经发送完数据，而且电机仍然处于运行状态 */
 	{
 		Motor_status = m_stop;	/* 电机状态切换至停止 */
+		CAN_send_feedback(c_motor_arrive);	/* 通知主机电机已经到达指定位置 */
 		return m_stop;	/* 认为电机刚刚到达指定位置 */
 	}
-	if(DMA_send_feedback(DMA1_Channel6) == 0 && (Motor_status == m_stop || Motor_status == m_waiting))
+	if(this_cndtr == 0 && (Motor_status == m_stop || Motor_status == m_waiting))
 	{
 		Motor_status = m_waiting;
 		return m_waiting;	/* 认为电机早已到达指定位置 */

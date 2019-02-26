@@ -51,7 +51,7 @@ int main(void)
 				(product_count == motion_buf_size)?(product_count = 1):(++product_count);
 				--empty_flag;	/* 获取一个空位 */
 				++full_flag;	/* 释放一个满位 */
-				CAN_send_feedback(c_get);
+				CAN_send_feedback(c_motion_request);	/* 已经接收到一则运动消息，并放入缓存区，向主机发送一次运动请求 */
 			}else	if(key != 0 && *(rec_buf+3) != 0)/* 如果接收到的信息是命令信息 */
 			{
 				switch(*(rec_buf+3))	/* 匹配命令 */
@@ -107,11 +107,11 @@ int main(void)
 						CAN_send_feedback(c_receive_call);	/* 响应主机呼叫，通知主机本节点存在 */
 						break;
 				}
-			}
-			if(MotorStatus() == m_stop)
+			}else if(key == 0 && empty_flag < motion_buf_size && full_flag != 0 && MotorStatus() != m_moving)	/* 如果主机没有发送消息或者命令，但是从机的缓存区中仍有运动信息尚未执行，则向主机发送运动请求 */
 			{
-				CAN_send_feedback(c_motor_arrive);	/* 通知主机电机已经到达指定位置 */
+				CAN_send_feedback(c_motion_request);
 			}
+			MotorStatus();	/* 尝试更新电机状态 */
 		}
 }
 
