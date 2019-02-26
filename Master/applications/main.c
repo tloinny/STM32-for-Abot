@@ -29,9 +29,14 @@ int main(void)
 				CAN_distribute(DEBUG_Rx_Buff, DEBUG_Receive_length);
 				DEBUG_Receive_length = 0;
 				DEBUG_RX_Start;//开启下一次接收
-				CAN_send_cmd(C_READY,slave_all);	/* 通知所有节点做好准备工作 */
-				DelayForRespond;
-				CAN_send_cmd(C_ACTION,slave_all);
+//				CAN_send_cmd(C_READY,slave_all);	/* 通知所有节点做好准备工作 */
+//				DelayForRespond;
+//				CAN_send_cmd(C_ACTION,slave_all);
+			}
+			DelayForRespond
+			if(Can_Receive_Msg(can_rec_buf) != 0)
+			{
+				match_feedback(can_rec_buf);				
 			}
 		}
 }

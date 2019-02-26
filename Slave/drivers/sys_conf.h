@@ -99,4 +99,6 @@
 #define m_stop		0x02	/* 电机刚刚停止运动，处于停止状态 */
 #define m_waiting 0x03	/* 电机早已停止运动，处于等待状态 */
 
+#define DelayForRespond delay_ms(6);
+
 #endif

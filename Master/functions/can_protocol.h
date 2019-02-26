@@ -9,4 +9,5 @@ void CAN_Call(void);
 void clean_can_buf(void);
 void clean_can_rec_buf(void);
 u8 home_all(void);
+void match_feedback(u8* feedback);
 #endif

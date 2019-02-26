@@ -37,6 +37,7 @@ int main(void)
 	EXTIX_Init();
 		while(1)
 		{
+			DelayForRespond
 			key = Can_Receive_Msg(rec_buf);		/* 接受CAN总线信息 */
 			if(key != 0 && *(rec_buf+3) == 0 && empty_flag != 0 && full_flag < motion_buf_size)	/* 如果接收到的信息不是命令信息，而且满足生产者的生产条件 */
 			{
@@ -44,10 +45,10 @@ int main(void)
 				motion_buf[product_count].rad = *(rec_buf+1)*254+*(rec_buf);	/* 计算关节转角弧度值 */
 				((motion_buf[product_count].rad-motion_buf[product_count - 1].rad)>0)?(motion_buf[product_count].dir = 1):(motion_buf[product_count].dir = 0);	/* 判断运动方向 */
 				motion_buf[product_count].speed_max = *(rec_buf+5)*254+*(rec_buf+4); /* 计算运动速度 */
-				printf("-----------\r\n");
-				printf("rad:%f\r\n",motion_buf[product_count].rad);
-				printf("dir:%d\r\n",motion_buf[product_count].dir);
-				printf("speed:%f\r\n",motion_buf[product_count].speed_max);
+//				printf("-----------\r\n");
+//				printf("rad:%f\r\n",motion_buf[product_count].rad);
+//				printf("dir:%d\r\n",motion_buf[product_count].dir);
+//				printf("speed:%f\r\n",motion_buf[product_count].speed_max);
 				(product_count == motion_buf_size)?(product_count = 1):(++product_count);
 				--empty_flag;	/* 获取一个空位 */
 				++full_flag;	/* 释放一个满位 */

@@ -217,21 +217,21 @@ void match_feedback(u8* feedback)
 				switch(*(feedback+1))
 				{
 					case 'R':	/* c_motor_arrive */
-						if((*(feedback+1)-'0')>=0 && (*(feedback+1)-'0')<slave_num_max)
+						if((*(feedback+2)-'0')>=0 && (*(feedback+2)-'0')<slave_num_max)
 						{
-							if(arrive_list[(*(feedback+1)-'0')] == 0)
+							if(arrive_list[(*(feedback+2)-'0')] == 0)
 							{
-								arrive_list[(*(feedback+1)-'0')] = 1;	/* 标志为已到达指定位置 */
+								arrive_list[(*(feedback+2)-'0')] = 1;	/* 标志为已到达指定位置 */
 								++arrive_num;
 							}
 						}
 						break;
 					case 'C':	/* c_motor_action */
-						if((*(feedback+1)-'0')>=0 && (*(feedback+1)-'0')<slave_num_max)
+						if((*(feedback+2)-'0')>=0 && (*(feedback+2)-'0')<slave_num_max)
 						{
-							if(arrive_list[(*(feedback+1)-'0')] == 0)
+							if(arrive_list[(*(feedback+2)-'0')] == 1)
 							{
-								arrive_list[(*(feedback+1)-'0')] = 0;	/* 标志为未到达指定位置 */
+								arrive_list[(*(feedback+2)-'0')] = 0;	/* 标志为未到达指定位置 */
 								--arrive_num;
 							}
 						}
@@ -249,4 +249,5 @@ void match_feedback(u8* feedback)
 		default:
 			break;		
 	}
+	clean_can_rec_buf();
 }

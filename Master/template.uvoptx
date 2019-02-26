@@ -157,9 +157,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>126</LineNumber>
+          <LineNumber>50</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134222652</Address>
+          <Address>134219832</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -168,7 +168,23 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>E:\WorkSpace\git鏈湴浠撳簱\Abot\STM32 for Abot\Master\functions\can_protocol.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\functions/can_protocol.c\126</Expression>
+          <Expression>\\template\functions/can_protocol.c\50</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>189</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134222960</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>E:\WorkSpace\git鏈湴浠撳簱\Abot\STM32 for Abot\Master\functions\can_protocol.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\template\functions/can_protocol.c\189</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -215,47 +231,17 @@
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>message_pending</ItemText>
+          <ItemText>ready_list</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>buf</ItemText>
+          <ItemText>arrive_list</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>temp_buf[n]</ItemText>
-        </Ww>
-        <Ww>
-          <count>11</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Can_Receive_Msg(temp_buf)</ItemText>
-        </Ww>
-        <Ww>
-          <count>12</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>slave_num</ItemText>
-        </Ww>
-        <Ww>
-          <count>13</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>count</ItemText>
-        </Ww>
-        <Ww>
-          <count>14</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>rec_history</ItemText>
-        </Ww>
-        <Ww>
-          <count>15</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>slave[i]*rec_history[i]</ItemText>
-        </Ww>
-        <Ww>
-          <count>16</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>slave[i]</ItemText>
+          <ItemText>\\template\functions/can_protocol.c\can_rec_buf</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
@@ -264,7 +250,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>

@@ -162,9 +162,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>67</LineNumber>
+          <LineNumber>112</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134228942</Address>
+          <Address>134229270</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -173,14 +173,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>E:\WorkSpace\git鏈湴浠撳簱\Abot\STM32 for Abot\Slave\applications\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\applications/main.c\67</Expression>
+          <Expression>\\template\applications/main.c\112</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>61</LineNumber>
+          <LineNumber>54</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134228858</Address>
+          <Address>134228790</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -189,7 +189,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>E:\WorkSpace\git鏈湴浠撳簱\Abot\STM32 for Abot\Slave\applications\main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\applications/main.c\61</Expression>
+          <Expression>\\template\applications/main.c\54</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -272,6 +272,11 @@
           <count>15</count>
           <WinNumber>1</WinNumber>
           <ItemText>consum_count</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>can_buf</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>
