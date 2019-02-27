@@ -8,7 +8,6 @@ u8 ready_num = 0;
 u8 ready_list[slave_num_max] = {0};
 u8 arrive_num = 0;
 u8 arrive_list[slave_num_max] = {0};
-u32 rec_history[slave_num_max] = {0};
 
 /**
  *@function CAN向从机发送速度信息和弧度制的角度信息
@@ -148,7 +147,7 @@ u8 home_all()
 	u8 count;
 	u8 i;
 		int n = 0;
-	//u32 rec_history[slave_num_max] = {0};	/* 记录哪些节点已经发送过信息,避免重复发送的情况 */
+	u32 rec_history[slave_num_max] = {0};	/* 记录哪些节点已经发送过信息,避免重复发送的情况 */
 	u8 temp_buf[8]={0};
 	CAN_send_cmd(C_HOME,slave_all);
 	for(count=0;count<slave_num;)	/* 阻塞性等待回复 */
@@ -162,14 +161,13 @@ u8 home_all()
 				{
 					rec_history[(temp_buf[1]-'0')] = 1;
 					++count;
-					//clean_can_rec_buf();
 				}
 			}	
 		}	
-	for(n=0;n<CAN_buf_size;++n)
-	{
-		temp_buf[n] = 0;
-	}
+		for(n=0;n<CAN_buf_size;++n)
+		{
+			temp_buf[n] = 0;
+		}
 	}
 	for(i=0;i<slave_num_max;++i)	/* 判断是否所有可用节点都已经寻找到原点 */
 	{

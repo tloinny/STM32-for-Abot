@@ -198,7 +198,7 @@ void motor_home()
 	while(home_flag == 0)	/* 当限位开关没有被触发 */
 	{
 		/* 逐步向关节原点靠近 */
-		motor_move_ready(1, 0, pi, pi, 1, 1, send_buf);
+		motor_move_ready(1, 0, 0.5*pi, 0.5*pi, 1, 1, send_buf);
 		motor_run();
 		while(1)	/* 如果电机不是处于运动状态，则可以继续发送脉冲 */
 		{
@@ -224,13 +224,11 @@ u8 MotorStatus()
 {
 	this_cndtr = DMA_send_feedback(DMA1_Channel6);
 	current_position = current_position + motion_dir*(pre_cndtr-this_cndtr);	/* 更新当前位置 */
-//	printf("pos:%d\r\n",current_position);
 	pre_cndtr = this_cndtr;
 	if(this_cndtr == 0 && Motor_status == m_moving)	/* 如果DMA已经发送完数据，而且电机仍然处于运行状态 */
 	{
 		Motor_status = m_stop;	/* 电机状态切换至停止 */
-		if(zeroed) CAN_send_feedback(c_motor_arrive);	/* 通知主机电机已经到达指定位置 */
-		delay_ms(10);
+		if(zeroed) CAN_send_feedback(c_motor_arrive);	/* 如果电机已经完成零点标定，则开启通知功能 */
 		return m_stop;	/* 认为电机刚刚到达指定位置 */
 	}
 	if(this_cndtr == 0 && (Motor_status == m_stop || Motor_status == m_waiting))
