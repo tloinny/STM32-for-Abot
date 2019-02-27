@@ -5,6 +5,7 @@ extern u8 home_flag;
 const float step_angle = 2 * pi/(motor_type*Micro_Step);
 const float timer_frep = 72000000/(psc_init+1);
 u8 Motor_status = 0;
+u8 zeroed = 0;
 int current_position;
 int motion_dir = 1;
 u32 pre_cndtr = 0;
@@ -207,6 +208,7 @@ void motor_home()
 	}
 	/* 限位开关被触发，电机停止 */
 	current_position = 0;
+	zeroed = 1;
 	motor_stop();
 }
 
@@ -227,7 +229,8 @@ u8 MotorStatus()
 	if(this_cndtr == 0 && Motor_status == m_moving)	/* 如果DMA已经发送完数据，而且电机仍然处于运行状态 */
 	{
 		Motor_status = m_stop;	/* 电机状态切换至停止 */
-		CAN_send_feedback(c_motor_arrive);	/* 通知主机电机已经到达指定位置 */
+		if(zeroed) CAN_send_feedback(c_motor_arrive);	/* 通知主机电机已经到达指定位置 */
+		delay_ms(10);
 		return m_stop;	/* 认为电机刚刚到达指定位置 */
 	}
 	if(this_cndtr == 0 && (Motor_status == m_stop || Motor_status == m_waiting))

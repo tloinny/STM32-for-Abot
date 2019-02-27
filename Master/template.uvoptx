@@ -178,42 +178,42 @@
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>RxMessage</ItemText>
+          <ItemText>key</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>key</ItemText>
+          <ItemText>DEBUG_Rx_Buff</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>DEBUG_Rx_Buff</ItemText>
+          <ItemText>slave</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>slave</ItemText>
+          <ItemText>ready_list</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>ready_list</ItemText>
+          <ItemText>arrive_list</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>arrive_list</ItemText>
+          <ItemText>\\template\functions/can_protocol.c\can_rec_buf</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\template\functions/can_protocol.c\can_rec_buf</ItemText>
+          <ItemText>temp_buf</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>temp_buf</ItemText>
+          <ItemText>rec_history</ItemText>
         </Ww>
       </WatchWindow1>
       <Tracepoint>

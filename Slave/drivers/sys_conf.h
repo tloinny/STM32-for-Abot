@@ -21,7 +21,7 @@
 #include "exti.h"
 #include "led.h"
 
-#define SLAVE3
+#define SLAVE2
 
 /**
  *@description define 
