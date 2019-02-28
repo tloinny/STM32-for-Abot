@@ -30,7 +30,7 @@
  
 /*电机参数设置
  */
-#define motor_type 400	/* 电机类型，例：200 pulse/r */
+#define motor_type 200	/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2		/* 驱动细分数 例：1/2 */
 
 
@@ -38,7 +38,7 @@
  *定时器分频数设置 
  *关系到电机的加速曲线
  */
-#define psc_init 719
+#define psc_init 23
 #define arr_init 0
 
 /*

@@ -107,13 +107,13 @@ u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, floa
 		steps = (u16)(0.5+steps);
 		while(!(i > steps))
 		{
-			if(i == 0) *(S_buf + i) = (u16)(0.5 + timer_frep* sqrt(step_angle/acc_accel) * 0.676);
+			if(i == 0) *(S_buf + i) = (u16)ceil(timer_frep* sqrt(2*step_angle/acc_accel) * 0.676);
 			if(i > 0 && i < accel_steps)	/* 加速段 */
 			{
 				*temp = (u16)(0.5+(*(S_buf + i - 1) - ((*(S_buf + i - 1) * 2 + compensation) / (4 * i - 1))));
-				if(*temp != 0)
+				if(*temp > arr_max)
 				*(S_buf + i) = (*temp);
-				else *(S_buf + i) = 2;
+				else *(S_buf + i) = arr_max;
 				compensation = (float)fmod( *(S_buf + i - 1) * 2 + compensation, 4 * i - 1);	/* 更新补偿 */
 			}
 			if(i >= accel_steps && i < accel_steps + const_steps)	/* 匀速段 */
@@ -123,9 +123,9 @@ u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, floa
 			if(i >= accel_steps + const_steps && i < steps)	/* 减速段 */
 			{
 				*temp = (u16)(0.5+(*(S_buf + (int)steps - i - 1) - (( *(S_buf + (int)steps - i - 1) * 2 + compensation) / (4 * i - 1))));
-				if(*temp != 0)
+				if(*temp > arr_max)
 				*(S_buf + i) = (*temp);
-				else *(S_buf + i) = 2;
+				else *(S_buf + i) = arr_max;
 				compensation = (float)fmod( *(S_buf + (int)steps - i - 1) * 2 + compensation, 4 * i - 1);	/* 更新补偿 */	
 			}
 			if (i == steps)
@@ -152,7 +152,7 @@ u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, floa
  */
 u8 motor_run()
 {
-	if(Motor_status != m_moving && send_buf[0] != 0)	/* 只有电机不处于运动状态而且运动步数大于时才开始下一次发送 */
+	if(Motor_status != m_moving && send_buf[0] != 0 && DMA1_Channel6->CNDTR != 0)	/* 只有电机不处于运动状态而且运动步数大于时才开始下一次发送 */
 	{
 		TIM3->ARR = 2;	/* 由于最后一项是0，所以在最后的时刻ARR会被清零，导致下一次启动无效。*/
 		DMA_Cmd(DMA1_Channel6, ENABLE);
@@ -198,7 +198,7 @@ void motor_home()
 	while(home_flag == 0)	/* 当限位开关没有被触发 */
 	{
 		/* 逐步向关节原点靠近 */
-		motor_move_ready(1, 0, 0.5*pi, 0.5*pi, 1, 1, send_buf);
+		motor_move_ready(1, 0, 0.5*pi, 0.5*pi, 0.1, 0.1, send_buf);
 		motor_run();
 		while(1)	/* 如果电机不是处于运动状态，则可以继续发送脉冲 */
 		{

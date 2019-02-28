@@ -162,9 +162,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>230</LineNumber>
+          <LineNumber>87</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134223468</Address>
+          <Address>134227822</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -173,7 +173,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>E:\WorkSpace\git鏈湴浠撳簱\Abot\STM32 for Abot\Slave\functions\motor_operate.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\functions/motor_operate.c\230</Expression>
+          <Expression>\\template\functions/motor_operate.c\87</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -272,6 +272,21 @@
           <WinNumber>1</WinNumber>
           <ItemText>mbox</ItemText>
         </Ww>
+        <Ww>
+          <count>19</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>max_steps_lim</ItemText>
+        </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>acc_lim</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>arr_max</ItemText>
+        </Ww>
       </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
@@ -317,8 +332,8 @@
       <pMultCmdsp></pMultCmdsp>
       <SystemViewers>
         <Entry>
-          <Name>System Viewer\CAN</Name>
-          <WinId>35904</WinId>
+          <Name>System Viewer\TIM3</Name>
+          <WinId>35905</WinId>
         </Entry>
       </SystemViewers>
       <DebugDescription>
