@@ -1,16 +1,27 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@created on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description:	电机驱动
+ */
+
 #include "sys_conf.h"
 
-extern u8 home_flag;
+const float step_angle = 2 * pi/(motor_type*Micro_Step);	/* 步距角 */
+const float timer_frep = 72000000/(psc_init+1);	/* 定时器频率 */
+u8 Motor_status = 0;	/* 电机状态标志 */
+u8 zeroed = 0;	/* 电机归零标志 */
+int current_position;	/* 电机虚拟里程计 */
+int motion_dir = 1;	/* 电机运动方向标志 */
 
-const float step_angle = 2 * pi/(motor_type*Micro_Step);
-const float timer_frep = 72000000/(psc_init+1);
-u8 Motor_status = 0;
-u8 zeroed = 0;
-int current_position;
-int motion_dir = 1;
-u32 pre_cndtr = 0;
-u32 this_cndtr = 0;
-u16 send_buf[send_buf_size];
+u32 pre_cndtr = 0;	/* 上一次的CNDTR值 */
+u32 this_cndtr = 0;	/* 当前的CNDTR值 */
+
+u16 send_buf[send_buf_size];	/* ARR配置缓存区 */
 
 /**
  *@function 电机初始化
@@ -67,7 +78,7 @@ void motor_dir(u8 dir)
 }
 
 /**
- *@function 电机运动控制
+ *@function 电机运动控制，核心：AVR446，电机梯形加减速算法
  *@param 
  *				steps:步进电机运动的步数
  *				dir:步进电机运动的方向
@@ -139,12 +150,11 @@ u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, floa
 		DMA_Cmd(DMA1_Channel6, DISABLE);	/* 修改DMA配置之前需确保DMA已经失能，否则无法修改配置 */
 		steps>0 ? DMA_SetCurrDataCounter(DMA1_Channel6,(u16)steps + 1) : DMA_SetCurrDataCounter(DMA1_Channel6,0);	/* 提前配置DMA的发送位数，但是暂时不使能DMA */
 		pre_cndtr = (u32)steps;
-		//DMA_Enable(DMA1_Channel6,(u16)steps + 1);
 		return 1;
 }
 
 /**
- *@function 电机运行
+ *@function 电机开始运行
  *@param void
  *@return 
  * 				1:成功发送
@@ -152,12 +162,12 @@ u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, floa
  */
 u8 motor_run()
 {
-	if(Motor_status != m_moving && send_buf[0] != 0 && DMA1_Channel6->CNDTR != 0)	/* 只有电机不处于运动状态而且运动步数大于时才开始下一次发送 */
+	if(Motor_status != m_moving && send_buf[0] != 0 && DMA1_Channel6->CNDTR != 0)	/* 只有电机不处于运动状态而且运动步数大于0时才开始下一次发送 */
 	{
-		TIM3->ARR = 2;	/* 由于最后一项是0，所以在最后的时刻ARR会被清零，导致下一次启动无效。*/
+		TIM3->ARR = 2;	/* 由于arr在send_buf的最后一项是0，所以在最后的时刻ARR会被清零，导致下一次启动无效，此处应先将arr修改为非零值*/
 		DMA_Cmd(DMA1_Channel6, ENABLE);
 		TIM_Cmd(TIM3, ENABLE);  /* 使能TIM3 */
-		TIM3->EGR = 0x00000001;
+		TIM3->EGR = 0x00000001;	/* 允许TIM3操作IO口 */
 		Motor_status = m_moving;	/* 切换至运行状态 */
 		return 1;
 	}
@@ -171,21 +181,10 @@ u8 motor_run()
  */
 void motor_stop()
 {
-	TIM_Cmd(TIM3,DISABLE);
-	DMA_Cmd(DMA1_Channel6,DISABLE);
-	DMA1_Channel6->CNDTR = 0;
-	Motor_status = m_stop;
-}
-
-/**
- *@function 电机重启
- *@param void
- *@return void
- */
-void motor_restart()
-{
-	DMA_Enable(DMA1_Channel6, send_buf_size);
-	home_flag = 0;
+	TIM_Cmd(TIM3,DISABLE);	/* 先关闭定时器 */
+	DMA_Cmd(DMA1_Channel6,DISABLE);	/* 再关闭DMA */
+	DMA1_Channel6->CNDTR = 0;	/* 清零CNDTR */
+	Motor_status = m_stop;	/* 切换至刚刚停止状态 */
 }
 
 /**
@@ -207,9 +206,9 @@ void motor_home()
 		motor_stop();
 	}
 	/* 限位开关被触发，电机停止 */
-	current_position = 0;
-	zeroed = 1;
-	motor_stop();
+	motor_stop();	/* 停止电机 */
+	current_position = 0;	/* 初始化虚拟里程计 */
+	zeroed = 1;	/* 标志为已经归零 */
 }
 
 /**
@@ -234,7 +233,7 @@ u8 MotorStatus()
 	if(this_cndtr == 0 && (Motor_status == m_stop || Motor_status == m_waiting))
 	{
 		Motor_status = m_waiting;
-		return m_waiting;	/* 认为电机早已到达指定位置 */
+		return m_waiting;	/* 认为电机早已到达指定位置，处于等待运行状态 */
 	}
 	return m_moving;	/* 否则认为电机尚未到达指定位置 */
 }

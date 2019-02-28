@@ -1,13 +1,24 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@created on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description: Abot关节节点CAN通讯协议驱动
+ */
+ 
 #include "sys_conf.h"
 
-u8 can_buf[CAN_buf_size] = {0};
-u8 can_rec_buf[CAN_buf_size] = {0};
-u32 slave[slave_num_max] = {slave_0,slave_1,slave_2,slave_3,slave_4,slave_5};
-u8 slave_num = 0;
-u8 ready_num = 0;
-u8 ready_list[slave_num_max] = {0};
-u8 arrive_num = 0;
-u8 arrive_list[slave_num_max] = {0};
+u8 can_send_buf[can_buf_size] = {0};	/* CAN总线发送缓存区 */
+u8 can_rec_buf[can_buf_size] = {0};	/* CAN总线接收缓存区 */
+u32 slave[slave_num_max] = {slave_0,slave_1,slave_2,slave_3,slave_4,slave_5};	/* 节点ID表 */
+u8 slave_num = 0;	/* 可用节点计数 */
+u8 ready_num = 0;	/* 已准备好的节点计数 */
+u8 ready_list[slave_num_max] = {0};	/* 准备好的节点列表 */
+u8 arrive_num = 0;	/* 到达的节点计数 */
+u8 arrive_list[slave_num_max] = {0};	/* 到达的节点列表 */
 
 /**
  *@function CAN向从机发送速度信息和弧度制的角度信息
@@ -24,12 +35,12 @@ u8 CAN_send_motion_info(float rad, float speed, u32 ID)
 	u8 result = 0;
 	u16 rad_temp = (u16)(rad * 1000);	/* 扩大1000倍，传输后精确到0.001 */
 	u16 speed_temp = (u16)(speed * 10);
-	*(can_buf) = (u8)(rad_temp%254);
-	*(can_buf + 1) = (u8)(rad_temp/254);
-	*(can_buf + 3) = 0;	/* '/0'作为分隔符 */
-	*(can_buf + 4) = (u8)(speed_temp%254);
-	*(can_buf + 5) = (u8)(speed_temp/254);
-	result = Can_Send_Msg(can_buf, CAN_buf_size, ID);
+	*(can_send_buf) = (u8)(rad_temp%254);
+	*(can_send_buf + 1) = (u8)(rad_temp/254);
+	*(can_send_buf + 3) = 0;	/* '/0'作为分隔符 */
+	*(can_send_buf + 4) = (u8)(speed_temp%254);
+	*(can_send_buf + 5) = (u8)(speed_temp/254);
+	result = Can_Send_Msg(can_send_buf, can_buf_size, ID);
 	return result;
 }
 
@@ -46,9 +57,9 @@ u8 CAN_send_cmd(u8 cmd, u32 ID)
 {
 	u16 i;
 	u8 result;
-	for(i = 0; i < CAN_buf_size; ++i) *(can_buf + i) = cmd;
-	result = Can_Send_Msg(can_buf, CAN_buf_size, ID);
-	clean_can_buf();
+	for(i = 0; i < can_buf_size; ++i) *(can_send_buf + i) = cmd;
+	result = Can_Send_Msg(can_send_buf, can_buf_size, ID);
+	clean_can_send_buf();
 	return result;
 }
 
@@ -67,17 +78,17 @@ u8 CAN_distribute(u8 * buf, u8 len)
 	u8 result=0;
 	for(;i<len-2;i+=3)	/* 以增量为3遍历buf */
 	{
-		*can_buf=*(buf+i);
-		*(can_buf+1)=*(buf+i+1);
-		*(can_buf+3)=0;
-		*(can_buf+4)=*(buf+i+2);	/* 根据buf配置can_buf的必要位 */
+		*can_send_buf=*(buf+i);
+		*(can_send_buf+1)=*(buf+i+1);
+		*(can_send_buf+3)=0;
+		*(can_send_buf+4)=*(buf+i+2);	/* 根据buf配置can_send_buf的必要位 */
 		if(slave[(i-1)/3] != 0)	/* 如果节点存在，则分发数据 */
 		{
-			result += Can_Send_Msg(can_buf, CAN_buf_size, slave[(i-1)/3]);	/* 分发数据 */
-			DEBUG_USART_DMA_Tx_Start(can_buf, CAN_buf_size);	/* 给上位机反馈 */
+			result += Can_Send_Msg(can_send_buf, can_buf_size, slave[(i-1)/3]);	/* 分发数据 */
+			DEBUG_USART_DMA_Tx_Start(can_send_buf, can_buf_size);	/* 给上位机反馈 */
 		}
 		DelayForRespond
-		clean_can_buf();
+		clean_can_send_buf();
 	}
 	return result;
 }
@@ -108,16 +119,16 @@ void CAN_Call()
 }
 
 /**
- *@function 清除can_buf中的数据
+ *@function 清除can_send_buf中的数据
  *@param void
  *@return void
  */
-void clean_can_buf()
+void clean_can_send_buf()
 {
 	int i = 0;
-	for(;i<CAN_buf_size;++i)
+	for(;i<can_buf_size;++i)
 	{
-		can_buf[i] = 0;
+		can_send_buf[i] = 0;
 	}
 }
 
@@ -129,7 +140,7 @@ void clean_can_buf()
 void clean_can_rec_buf()
 {
 	int i = 0;
-	for(;i<CAN_buf_size;++i)
+	for(;i<can_buf_size;++i)
 	{
 		can_rec_buf[i] = 0;
 	}
@@ -164,7 +175,7 @@ u8 home_all()
 				}
 			}	
 		}	
-		for(n=0;n<CAN_buf_size;++n)
+		for(n=0;n<can_buf_size;++n)
 		{
 			temp_buf[n] = 0;
 		}

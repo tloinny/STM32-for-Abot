@@ -1,10 +1,21 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@created on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description: 电机IO口底层配置
+ */
+
 #include "motor_gpio.h"
 
 /**
  *@function 步进电机IO初始化
- *CLK	---- PA6
- *DIR	---- PB3
- *EN	---- PB4
+ *						CLK	---- PA6
+ *						DIR	---- PB3
+ *						EN	---- PB4
  *@param void
  *@return void
  */

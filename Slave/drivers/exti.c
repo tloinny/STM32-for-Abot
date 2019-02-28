@@ -1,6 +1,17 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@created on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description: 外部中断驱动
+ */
+
 #include "sys_conf.h"
 
-u8 home_flag = 0;
+u8 home_flag = 0;	/* 限位开关标志位 */
 
 /**
  *@function 外部中断初始化
@@ -34,9 +45,8 @@ void EXTIX_Init(void)
 
 void EXTI9_5_IRQHandler(void)
 {
-	delay_ms(10);
-	if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_5) == 0)	home_flag = 1;
-	printf("home\r\n");
+	delay_ms(10);	/* 消抖 */
+	if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_5) == 0)	home_flag = 1;	/* 限位开关标志为触发 */
 	EXTI_ClearITPendingBit(EXTI_Line5);  /* 清除LINE5上的中断标志位 */  
 }
  

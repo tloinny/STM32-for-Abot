@@ -1,13 +1,24 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@created on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description: 定时器底层配置
+ */
+ 
 #include "timer.h"
 #include "sys_conf.h"
 
 TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
  
-/*
- *TIM3 PWM部分初始化 
- *PWM输出初始化
- *arr：自动重装值
- *psc：时钟预分频数
+/**
+ *@function TIM3 PWM部分初始化 
+ *@param 
+ *			arr：自动重装值
+ *			psc：时钟预分频数
  */
 void TIM3_PWM_Init(u16 arr,u16 psc)
 {  

@@ -1,5 +1,17 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@date on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description: Abot slave firmware
+ */
+ 
 #include "sys_conf.h"
 
+/* 电机运动信息格式 */
 typedef struct motion_info
 {
 	float rad;
@@ -7,19 +19,17 @@ typedef struct motion_info
 	float speed_max;
 } motion_info;
 
-motion_info motion_buf[motion_buf_size];	/* 电机运动参数缓存区 */
-extern u16 send_buf[send_buf_size]; /* 脉冲发送缓存区 */ 
-
-int key = 0;
-int product_count = 1;	/* motion_info 生产者计数 */
-int consum_count = 1;	/* motion_info 消费者计数 */
-extern int current_position;
-float delta_rad = 0; 
-	
+/* 电机运动信息的读写过程使用了“生产者消费者模式” */
+/* 以下这段声明的都是生产者消费者模式需要使用到的量 */
+motion_info motion_buf[motion_buf_size];	/* 电机运动信息缓存区 */
 u8 empty_flag = motion_buf_size;	/* 空位，初始值为motion_buf_size */
 u8 full_flag = 0;		/* 满位，初始值为0 */
+int product_count = 1;	/* motion_info 生产者计数 */
+int consum_count = 1;	/* motion_info 消费者计数 */
+float delta_rad = 0; /*  */
 
-u8 rec_buf[8] = {0};
+u8 key = 0;	/* CAN接收返回标志位 */
+
 int main(void)
 {
 	/* 初始化结构体数组的第一位 */
@@ -34,39 +44,37 @@ int main(void)
 	LED0 = 0;
 	motor_init(DMA1_Channel6, (u32)&TIM3->ARR, (u32)send_buf, send_buf_size,arr_init, psc_init);	/* 初始化电机 */
 	CAN_Mode_Init(CAN_SJW_1tq,CAN_BS2_8tq,CAN_BS1_9tq,4,CAN_Mode_Normal);	/* 初始化CAN总线 */
-	EXTIX_Init();
+	EXTIX_Init();	/* 初始化外部中断 */
 		while(1)
 		{
-			DelayForRespond
-			key = Can_Receive_Msg(rec_buf);		/* 接受CAN总线信息 */
-			if(key != 0 && *(rec_buf+3) == 0 && empty_flag != 0 && full_flag < motion_buf_size)	/* 如果接收到的信息不是命令信息，而且满足生产者的生产条件 */
+			DelayForRespond	/* CPU挂起，等待主机的回复 */
+			key = Can_Receive_Msg(can_rec_buf);		/* 接受CAN总线信息 */
+			if(key != 0 && *(can_rec_buf+3) == 0 && empty_flag != 0 && full_flag < motion_buf_size)	/* 如果接收到的信息不是命令信息，而且满足生产者的生产条件 */
 			{
 				/* 生产者行为 */
-				motion_buf[product_count].rad = *(rec_buf+1)*254+*(rec_buf);	/* 计算关节转角弧度值 */
-				((motion_buf[product_count].rad-motion_buf[product_count - 1].rad)>0)?(motion_buf[product_count].dir = 1):(motion_buf[product_count].dir = 0);	/* 判断运动方向 */
-				motion_buf[product_count].speed_max = *(rec_buf+5)*254+*(rec_buf+4); /* 计算运动速度 */
-//				printf("-----------\r\n");
-//				printf("rad:%f\r\n",motion_buf[product_count].rad);
-//				printf("dir:%d\r\n",motion_buf[product_count].dir);
-//				printf("speed:%f\r\n",motion_buf[product_count].speed_max);
-				(product_count == motion_buf_size)?(product_count = 1):(++product_count);
+				
+				motion_buf[product_count].rad = *(can_rec_buf+1)*254+*(can_rec_buf);	/* 计算关节转角弧度值 */
+				(motion_buf[product_count].rad-motion_buf[product_count - 1].rad)>0 ? (motion_buf[product_count].dir = 1) : (motion_buf[product_count].dir = 0);	/* 判断运动方向 */
+				motion_buf[product_count].speed_max = *(can_rec_buf+5)*254+*(can_rec_buf+4); /* 计算运动速度 */
+				
+				(product_count == motion_buf_size)?(product_count = 1):(++product_count);	/* 生产者计数 */
+				
 				--empty_flag;	/* 获取一个空位 */
 				++full_flag;	/* 释放一个满位 */
 				CAN_send_feedback(c_motion_request);	/* 已经接收到一则运动消息，并放入缓存区，向主机发送一次运动请求 */
-			}else	if(key != 0 && *(rec_buf+3) != 0)/* 如果接收到的信息是命令信息 */
+			}else	if(key != 0 && *(can_rec_buf+3) != 0)/* 如果接收到的信息是命令信息 */
 			{
-				switch(*(rec_buf+3))	/* 匹配命令 */
+				switch(*(can_rec_buf+3))	/* 匹配命令 */
 				{
 					case C_READY:	/* READY命令：预先配置好send_buf，等待ACTION命令 */
-						printf("recieve r \r\n");
 						if(empty_flag < motion_buf_size && full_flag != 0 && MotorStatus() != m_moving)	/* 在运动信息缓存区可用而且电机不在运动状态时才能配置send_buf */
 						{
 							/* 消费者行为 */
 							
-							/* 计算与上一个位置的delta值 */
+							/* 计算与上一个位置的delta值，用于配置电机运动参数 */
 							delta_rad = fabs((motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000);
 							motor_move_ready(motor_type*Micro_Step*ratio*(delta_rad/pi/2), motion_buf[consum_count].dir, 5*pi, pi, 1, 1, send_buf);
-							printf("config \r\n");
+							
 							/* 用完清零上一位的数据 */
 							if(consum_count - 1 > 0)
 							{
@@ -75,14 +83,14 @@ int main(void)
 								motion_buf[consum_count - 1].speed_max = 0;	
 							}
 							
-							(consum_count == motion_buf_size)?(consum_count = 1):(++consum_count);
+							(consum_count == motion_buf_size)?(consum_count = 1):(++consum_count);	/* 消费者计数 */
+							
 							++empty_flag;	/* 释放一个空位 */
 							--full_flag;	/* 获取一个满位 */
 						}
 						CAN_send_feedback(c_motor_ready);	/* 通知主机已经完成一次准备工作，可以接收ACTION命令了 */
 						break;
-					case C_ACTION:	/* ACTION命令：开启DMA和定时器，电机立刻根据send_buf的内容运行 */
-						printf("recieve a\r\n");
+					case C_ACTION:	/* ACTION命令：开启DMA和定时器，电机根据send_buf的内容运行 */
 						if(motor_run()==1)
 						{
 							CAN_send_feedback(c_motor_action);	/* 通知主机已经开始一次ACTION */

@@ -1,3 +1,14 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@created on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description: Abot master firmware config file
+ */
+
 #ifndef _SYS_CONF_H_
 #define _SYS_CONF_H_
 
@@ -16,7 +27,6 @@
 #include "can_protocol.h"
 #include "led.h"
 #include "dma_usart1_debug.h"
-//#include "usart.h"
 
 /**
  *@description define 
@@ -26,7 +36,7 @@
 /*
  *数组容量设置
  */
-#define CAN_buf_size 8
+#define can_buf_size 8
 #define usart_buf_size 5000
 #define slave_num_max 6
 
@@ -60,5 +70,16 @@
 #define slave_all 	0x07Ef0000
 
 #define DelayForRespond delay_ms(6);
+
+/*
+ *统一声明变量
+ */
+extern u8 can_send_buf[];
+extern u8 can_rec_buf[];
+extern u8 slave_num;
+
+extern u8 DEBUG_Tx_Buff[DEBUG_TX_BUFF_SIZE];
+extern u8 DEBUG_Rx_Buff[DEBUG_RX_BUFF_SIZE];
+extern __IO u8 DEBUG_Receive_length;
 
 #endif

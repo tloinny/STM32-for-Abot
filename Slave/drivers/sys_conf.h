@@ -1,3 +1,14 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@created on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description: Abot slave firmware config file
+ */
+ 
 #ifndef _SYS_CONF_H_
 #define _SYS_CONF_H_
 
@@ -21,14 +32,22 @@
 #include "exti.h"
 #include "led.h"
 
-#define SLAVE2
-
 /**
  *@description define 
  *在这里配置用户代码中的define值
  */
  
-/*电机参数设置
+/*
+ *配置节点序号
+ *修改所选序号前的注释即可
+ */
+#define SLAVE0 
+//#define SLAVE1
+//#define SLAVE2
+//#define SLAVE3 
+ 
+/*
+ *电机参数设置
  */
 #define motor_type 200	/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2		/* 驱动细分数 例：1/2 */
@@ -46,7 +65,7 @@
  */
 #define send_buf_size 6401
 #define motion_buf_size 200
-#define CAN_buf_size 8
+#define can_buf_size 8
 
 /*
  *计算参数
@@ -128,8 +147,8 @@
 #define slave_1 		0x00400000	/* mask: 0x00400000 */
 #define slave_2 		0x00800000	/* mask: 0x00800000 */
 #define slave_3 		0x01000000	/* mask: 0x01000000 */
-//#define slave_4			0x02000000	/* mask: 0x02000000 */	
-//#define slave_5			0x04000000	/* mask: 0x04000000 */	
+//#define slave_4			0x02000000	/* mask: 0x02000000 预留节点 */	
+//#define slave_5			0x04000000	/* mask: 0x04000000 预留节点 */
 #define slave_all 	0x07Ef0000
 
 /*
@@ -139,6 +158,19 @@
 #define m_stop		0x02	/* 电机刚刚停止运动，处于停止状态 */
 #define m_waiting 0x03	/* 电机早已停止运动，处于等待状态 */
 
+
 #define DelayForRespond delay_ms(6);
+
+/**
+ *统一变量声明
+ */
+extern u8 home_flag;
+extern u8 can_rec_buf[];
+extern u8 can_send_buf[];
+
+extern const float step_angle;
+
+extern u16 send_buf[];
+extern int current_position;
 
 #endif

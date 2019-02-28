@@ -1,16 +1,29 @@
+/**
+ *@title Abot Firmware
+ * Copyright: Copyright (c) 2019 Abot [https://github.com/tloinny/STM32-for-Abot]
+ *
+ *@created on 2019-1-08  
+ *@author:tony-lin
+ *@version 1.0.0 
+ * 
+ *@description: DMA底层配置
+ */
+
 #include "dma.h"
 
 DMA_InitTypeDef DMA_InitStructure;
 u16 DMA1_MEM_LEN;	 /* 保存DMA每次数据传送的长度 */
 
-/*
- *DMA1的各通道配置
+/**
+ *@function DMA1的各通道配置
  *这里的传输形式是固定的,这点要根据不同的情况来修改
  *从存储器->外设模式/8位数据宽度/存储器增量模式
- *DMA_CHx:DMA通道CHx
- *cpar:外设地址
- *cmar:存储器地址
- *cndtr:数据传输量
+ *@param 
+ *			DMA_CHx:DMA通道CHx
+ *			cpar:外设地址
+ *			cmar:存储器地址
+ *			cndtr:数据传输量
+ *@return void
  */
 void DMA_Config(DMA_Channel_TypeDef* DMA_CHx,u32 cpar,u32 cmar,u16 cndtr)
 {
@@ -35,19 +48,11 @@ void DMA_Config(DMA_Channel_TypeDef* DMA_CHx,u32 cpar,u32 cmar,u16 cndtr)
 	DMA_Init(DMA_CHx, &DMA_InitStructure);  	
 } 
 
-/* 开启一次DMA传输 */
-void DMA_Enable(DMA_Channel_TypeDef*DMA_CHx,u16 MEM_LEN)
-{
-	DMA_Cmd(DMA_CHx, DISABLE );
-	TIM3->ARR = 2;	/* 由于最后一项是0，所以在最后的时刻ARR会被清零，导致下一次启动无效。*/
-  DMA_SetCurrDataCounter(DMA_CHx,MEM_LEN);
-  DMA_Cmd(DMA_CHx, ENABLE);
-	TIM_Cmd(TIM3, ENABLE);  /* 使能TIM3 */
-	TIM3->EGR = 0x00000001;
-}	  
-
-/*
- *进度反馈，返回剩下的数据量
+/**
+ *@function 进度反馈，返回剩下的数据量
+ *@param 
+ *			DMA_CHx:DMA通道CHx
+ *@return void
  */
 u16 DMA_send_feedback(DMA_Channel_TypeDef* DMA_CHx)
 {
