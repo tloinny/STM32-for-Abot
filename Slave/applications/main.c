@@ -11,22 +11,15 @@
  
 #include "sys_conf.h"
 
-/* 电机运动信息格式 */
-typedef struct motion_info
-{
-	float rad;
-	u8 dir;
-	float speed_max;
-} motion_info;
-
 /* 电机运动信息的读写过程使用了“生产者消费者模式” */
 /* 以下这段声明的都是生产者消费者模式需要使用到的量 */
 motion_info motion_buf[motion_buf_size];	/* 电机运动信息缓存区 */
-u8 empty_flag = motion_buf_size;	/* 空位，初始值为motion_buf_size */
-u8 full_flag = 0;		/* 满位，初始值为0 */
+u8 motion_buf_full = 0;
+u16 empty_flag = motion_buf_size;	/* 空位，初始值为motion_buf_size */
+u16 full_flag = 0;		/* 满位，初始值为0 */
 int product_count = 1;	/* motion_info 生产者计数 */
 int consum_count = 1;	/* motion_info 消费者计数 */
-float delta_rad = 0; /*  */
+float delta_rad = 0;
 
 u8 key = 0;	/* CAN接收返回标志位 */
 
@@ -67,7 +60,7 @@ int main(void)
 				switch(*(can_rec_buf+3))	/* 匹配命令 */
 				{
 					case C_READY:	/* READY命令：预先配置好send_buf，等待ACTION命令 */
-						if(empty_flag < motion_buf_size && full_flag != 0 && MotorStatus() != m_moving)	/* 在运动信息缓存区可用而且电机不在运动状态时才能配置send_buf */
+						if(empty_flag < motion_buf_size && full_flag != 0 && MotorStatus() != m_moving && zeroed != 0)	/* 在运动信息缓存区可用而且电机不在运动状态时才能配置send_buf */
 						{
 							/* 消费者行为 */
 							
@@ -119,6 +112,15 @@ int main(void)
 			}else if(key == 0 && empty_flag < motion_buf_size && full_flag != 0 && MotorStatus() != m_moving)	/* 如果主机没有发送消息或者命令，但是从机的缓存区中仍有运动信息尚未执行，则向主机发送运动请求 */
 			{
 				CAN_send_feedback(c_motion_request);
+			}
+			if(empty_flag == 0 && motion_buf_full == 0)	/* 如果缓存区没有空位，则认为motion_buf已满，通知主机不要再发，将信息暂存在主机内存中 */
+			{
+				CAN_send_feedback(c_buf_full);
+				motion_buf_full = 1;
+			}else if(empty_flag > 50 && motion_buf_full == 1)	/* 如果缓存区有大于50个空位，则认为motion_buf可用，通知主机可以继续发送 */
+			{
+				CAN_send_feedback(c_buf_usefull);
+				motion_buf_full = 0;				
 			}
 			MotorStatus();	/* 尝试更新电机状态 */
 		}

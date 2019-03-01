@@ -15,7 +15,7 @@ const float step_angle = 2 * pi/(motor_type*Micro_Step);	/* 步距角 */
 const float timer_frep = 72000000/(psc_init+1);	/* 定时器频率 */
 u8 Motor_status = 0;	/* 电机状态标志 */
 u8 zeroed = 0;	/* 电机归零标志 */
-int current_position;	/* 电机虚拟里程计 */
+int current_position = -1;	/* 电机虚拟里程计 */
 int motion_dir = 1;	/* 电机运动方向标志 */
 
 u32 pre_cndtr = 0;	/* 上一次的CNDTR值 */
@@ -207,8 +207,9 @@ void motor_home()
 	}
 	/* 限位开关被触发，电机停止 */
 	motor_stop();	/* 停止电机 */
-	current_position = 0;	/* 初始化虚拟里程计 */
+	current_position = 0;	/* 初始化虚拟里程计，设置虚拟里程计原点，该值由实际机器人的限位开关放置位置决定 */
 	zeroed = 1;	/* 标志为已经归零 */
+	motion_buf_init();	/* 初始化运动信息缓存区的虚拟原点 */
 }
 
 /**
@@ -236,4 +237,16 @@ u8 MotorStatus()
 		return m_waiting;	/* 认为电机早已到达指定位置，处于等待运行状态 */
 	}
 	return m_moving;	/* 否则认为电机尚未到达指定位置 */
+}
+
+/**
+ *@function 初始化运动信息缓存区结构体数组的第一位，即初始化关节运动信息的虚拟原点
+ *@param void
+ *@return void 
+ */
+void motion_buf_init()
+{
+	motion_buf[0].rad = current_position;
+	motion_buf[0].dir = 0;
+	motion_buf[0].speed_max = 0;
 }

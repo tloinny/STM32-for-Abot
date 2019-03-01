@@ -64,7 +64,7 @@
  *数组容量设置
  */
 #define send_buf_size 6401
-#define motion_buf_size 200
+#define motion_buf_size 500
 #define can_buf_size 8
 
 /*
@@ -101,6 +101,8 @@
 #define c_motor_stop				"S0"
 #define c_motor_disable			"D0"
 #define c_motor_enable			"E0"
+#define c_buf_full					"F"
+#define c_buf_usefull				"U"
 #endif
 
 #ifdef SLAVE1
@@ -113,6 +115,8 @@
 #define c_motor_stop				"S1"
 #define c_motor_disable			"D1"
 #define c_motor_enable			"E1"
+#define c_buf_full					"F"
+#define c_buf_usefull				"U"
 #endif
 
 #ifdef SLAVE2
@@ -125,6 +129,8 @@
 #define c_motor_stop				"S2"
 #define c_motor_disable			"D2"
 #define c_motor_enable			"E2"
+#define c_buf_full					"F"
+#define c_buf_usefull				"U"
 #endif
 
 #ifdef SLAVE3
@@ -137,6 +143,8 @@
 #define c_motor_stop				"S3"
 #define c_motor_disable			"D3"
 #define c_motor_enable			"E3"
+#define c_buf_full					"F"
+#define c_buf_usefull				"U"
 #endif
 
 /*
@@ -172,5 +180,16 @@ extern const float step_angle;
 
 extern u16 send_buf[];
 extern int current_position;
+extern u8 zeroed;
+
+/* 电机运动信息格式 */
+struct motion_info
+{
+	float rad;
+	u8 dir;
+	u8 speed_max;
+};
+typedef struct motion_info motion_info;
+extern motion_info motion_buf[motion_buf_size];
 
 #endif

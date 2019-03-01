@@ -11,6 +11,12 @@
  
 #include "sys_conf.h"
 
+u8 usart_buf[usart_buf_size][14];
+u16 empty_flag = usart_buf_size;	/* 空位，初始值为motion_buf_size */
+u16 full_flag = 0;		/* 满位，初始值为0 */
+int product_count = 0;	/* 生产者计数 */
+int consum_count = 0;	/* 消费者计数 */
+
 int main(void)
 {
 	delay_init();
@@ -29,9 +35,34 @@ int main(void)
 			if(DEBUG_Receive_length > 0) /* 接收完一帧数据,进行数据分发 */
 			{
 				if(DEBUG_Rx_Buff[0]==255 && DEBUG_Rx_Buff[DEBUG_Receive_length-1]==255 && DEBUG_Receive_length == 14)
-				CAN_distribute(DEBUG_Rx_Buff, DEBUG_Receive_length);
+				{
+					if(slave_buf_available == 1 && empty_flag == usart_buf_size && full_flag == 0)	/* 如果从机的缓存区可用，而且主机缓存区内已经没有数据，则可以直接进行数据分发 */
+					{
+						CAN_distribute(DEBUG_Rx_Buff,DEBUG_Receive_length);
+					}else if(slave_buf_available == 0 && empty_flag != 0 && full_flag <usart_buf_size)	/* 如果从机的缓存区不可用，但是主机缓存区可用，则需要开启主机缓存功能 */
+					{
+						int i;
+						for(i=0;i<DEBUG_Receive_length;++i)
+						{
+							usart_buf[product_count][i] = DEBUG_Rx_Buff[i];
+						}
+						(product_count == usart_buf_size)?(product_count = 0):(++product_count);	/* 生产者计数 */
+						--empty_flag;	/* 获取一个空位 */
+						++full_flag;	/* 释放一个满位 */
+					}
+				}				
 				DEBUG_Receive_length = 0;
 				DEBUG_RX_Start;	/* 开启下一次接收 */
+			}
+			
+			if(slave_buf_available == 1 && empty_flag != usart_buf_size && full_flag != 0 )
+			{
+				CAN_distribute(usart_buf[consum_count],14);
+				
+				(consum_count == usart_buf_size)?(consum_count = 1):(++consum_count);	/* 消费者计数 */
+							
+				++empty_flag;	/* 释放一个空位 */
+				--full_flag;	/* 获取一个满位 */				
 			}
 			
 			/* CPU挂起，等待总线上的数据 */

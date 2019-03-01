@@ -14,4 +14,5 @@ u8 motor_run(void);
 void motor_stop(void);
 void motor_home(void);
 u8 MotorStatus(void);
+void motion_buf_init(void);
 #endif

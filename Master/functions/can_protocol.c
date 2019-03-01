@@ -19,6 +19,7 @@ u8 ready_num = 0;	/* 已准备好的节点计数 */
 u8 ready_list[slave_num_max] = {0};	/* 准备好的节点列表 */
 u8 arrive_num = 0;	/* 到达的节点计数 */
 u8 arrive_list[slave_num_max] = {0};	/* 到达的节点列表 */
+u8 slave_buf_available = 1;	/* 表示从机缓存区是否可用，用于决定是否开启主机缓存功能 */
 
 /**
  *@function CAN向从机发送速度信息和弧度制的角度信息
@@ -262,6 +263,12 @@ void match_feedback(u8* feedback)
 			break;
 		case 'E':	/* c_motor_ensable:表示某个从机的电机已经使能 */
 			break;
+		case 'F':	/* c_buf_full:表示某个从机的运动信息缓存区已满 */
+			slave_buf_available = 0;
+		break;
+		case 'U':	/* c_buf_usefull:表示某个从机的运动信息缓存区恢复可用 */
+			slave_buf_available = 1;
+		break;
 		default:
 			break;		
 	}

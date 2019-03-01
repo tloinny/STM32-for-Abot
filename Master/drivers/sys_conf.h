@@ -37,7 +37,7 @@
  *数组容量设置
  */
 #define can_buf_size 8
-#define usart_buf_size 5000
+#define usart_buf_size 1000
 #define slave_num_max 6
 
 /*
@@ -77,6 +77,7 @@
 extern u8 can_send_buf[];
 extern u8 can_rec_buf[];
 extern u8 slave_num;
+extern u8 slave_buf_available;
 
 extern u8 DEBUG_Tx_Buff[DEBUG_TX_BUFF_SIZE];
 extern u8 DEBUG_Rx_Buff[DEBUG_RX_BUFF_SIZE];
