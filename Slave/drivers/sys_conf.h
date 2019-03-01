@@ -41,9 +41,9 @@
  *配置节点序号
  *修改所选序号前的注释即可
  */
-#define SLAVE0 
+//#define SLAVE0 
 //#define SLAVE1
-//#define SLAVE2
+#define SLAVE2
 //#define SLAVE3 
  
 /*
@@ -57,7 +57,7 @@
  *定时器分频数设置 
  *关系到电机的加速曲线
  */
-#define psc_init 23
+#define psc_init 50
 #define arr_init 0
 
 /*
