@@ -48,7 +48,6 @@ int main(void)
 				
 				motion_buf[product_count].rad = *(can_rec_buf+1)*254+*(can_rec_buf);
 				(motion_buf[product_count].rad-motion_buf[product_count - 1].rad)>0 ? (motion_buf[product_count].dir = 1) : (motion_buf[product_count].dir = 0);	/* 判断运动方向 */
-				motion_buf[product_count].rad = fabs((motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000); /* 计算与上一个位置的delta值，用于配置电机运动参数 */
 				motion_buf[product_count].speed_max = *(can_rec_buf+5)*254+*(can_rec_buf+4); /* 计算运动速度 */
 				motion_buf[product_count].state = *(can_rec_buf+7);
 				
@@ -67,8 +66,9 @@ int main(void)
 							/* 消费者行为 */
 							
 							/* 计算与上一个位置的delta值，用于配置电机运动参数 */
-							//delta_rad = fabs((motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000);
-							motor_point_movement_ready(motor_type*Micro_Step*ratio*(motion_buf[product_count].rad/pi/2), motion_buf[consum_count].dir, 5*pi, 0.01*pi, 0.05, 0.05, send_buf);
+							delta_rad = fabs((motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000);
+							//motion_buf[consum_count].rad = fabs((motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000); /* 计算与上一个位置的delta值，用于配置电机运动参数 */
+							motor_point_movement_ready(motor_type*Micro_Step*ratio*(delta_rad/pi/2), motion_buf[consum_count].dir, 30*pi, 0.1*pi, 0.2, 0.2, send_buf);
 							
 							/* 用完清零上一位的数据 */
 							if(consum_count - 1 > 0)
