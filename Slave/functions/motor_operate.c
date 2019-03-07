@@ -153,9 +153,69 @@ u8 motor_point_movement_ready(float steps, u8 dir, float speed_max, float speed_
 		return 1;
 }
 
-void motor_trajectory_config()
+/**
+ *@function 用电机运动轨迹配置send_buf
+ *@param
+ *				trajectory_buf:轨迹信息缓存区
+ *
+ *@return void
+ */
+void motor_trajectory_config(motion_info * trajectory_buf, float speed_max, float speed_init, u16 * S_buf,u16 offset)
 {
-	
+	float acc_accel = 0;
+	float compensation = 0;
+	u16 steps = (u16)(0.5 + motor_type*Micro_Step*ratio*((trajectory_buf->rad)/pi/2));
+	u16 temp = 0;
+	u16 i = 0;
+	u8 arr = 0;
+	if(trajectory_buf->state != 'G')
+	{
+		if(speed_max != speed_init)	/* 如果需要变速 */
+		{
+			acc_accel = ((speed_max+speed_init)*(speed_max-speed_init))/ (2*step_angle*steps);
+				if(acc_accel > 0)
+				{
+					while(i < steps)
+					{
+						if(i == 0)
+						{
+							*(S_buf+offset) = (u16)ceil(timer_frep* sqrt(2*step_angle/acc_accel) * 0.676);	/* 初始化send_buf的第一位 */
+						}else
+						{
+							*(S_buf+offset+i) =(u16)(0.5+(*(S_buf+offset+i-1)-((*(S_buf+offset+i-1)*2+compensation)/(4*(offset+i)-1))));
+							compensation = (float)fmod(*(S_buf+offset+i-1)*2+compensation, 4*(offset+i)-1);	/* 更新补偿 */
+						}
+						++i;
+					}
+				}else if(acc_accel < 0)
+				{
+					acc_accel = -1*acc_accel;
+					while(i < steps)
+					{
+						if(i == 0)
+						{
+							*(S_buf+offset) = (u16)ceil(timer_frep* sqrt(2*step_angle/acc_accel) * 0.676);	/* 初始化send_buf的第一位 */
+						}else
+						{
+							*(S_buf+offset+i) =(u16)(0.5+(*(S_buf+offset+i-1)-((*(S_buf+offset+i-1)*2+compensation)/(4*(offset+i)-1))));
+							if(i!=1) *(S_buf+offset+i-1) = temp;
+							temp = *(S_buf+offset)*2 - *(S_buf+offset+i);
+							compensation = (float)fmod(*(S_buf+offset+i-1)*2+compensation, 4*(offset+i)-1);	/* 更新补偿 */
+						}
+						++i;
+					}
+				}
+		}else		/* 如果不需要变速 */
+		{
+			while(i<steps)
+			{
+				if(offset==0)
+				{
+					
+				}
+			}
+		}
+	}
 }
 
 /**

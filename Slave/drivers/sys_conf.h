@@ -188,8 +188,16 @@ struct motion_info
 	float rad;
 	u8 dir;
 	u8 speed_max;
+	u8 state;
 };
 typedef struct motion_info motion_info;
 extern motion_info motion_buf[motion_buf_size];
+
+extern u8 motion_buf_full;
+extern u16 empty_flag;	/* 空位，初始值为motion_buf_size */
+extern u16 full_flag;		/* 满位，初始值为0 */
+extern int product_count;	/* motion_info 生产者计数 */
+extern int consum_count;	/* motion_info 消费者计数 */
+
 
 #endif
