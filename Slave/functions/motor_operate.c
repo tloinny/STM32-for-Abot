@@ -91,7 +91,7 @@ void motor_dir(u8 dir)
  *				1:成功配置send_buf
  *				0:配置过程出现问题
  */
-u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, float acc_accel, float acc_decel, u16 * S_buf)
+u8 motor_point_movement_ready(float steps, u8 dir, float speed_max, float speed_init, float acc_accel, float acc_decel, u16 * S_buf)
 {
 	if(((u16)(steps+1.5))>send_buf_size) return 0;	/* 检查边界 */
 	u16 max_steps_lim = (u16)(0.5+((speed_max+speed_init)*(speed_max-speed_init))/ (2*step_angle*acc_accel));	/* the number of steps needed to accelerate to the desired speed */
@@ -153,6 +153,11 @@ u8 motor_move_ready(float steps, u8 dir, float speed_max, float speed_init, floa
 		return 1;
 }
 
+void motor_trajectory_config()
+{
+	
+}
+
 /**
  *@function 电机开始运行
  *@param void
@@ -197,7 +202,7 @@ void motor_home()
 	while(home_flag == 0)	/* 当限位开关没有被触发 */
 	{
 		/* 逐步向关节原点靠近 */
-		motor_move_ready(1, 0, 0.5*pi, 0.5*pi, 0.1, 0.1, send_buf);
+		motor_point_movement_ready(1, 0, 0.5*pi, 0.5*pi, 0.1, 0.1, send_buf);
 		motor_run();
 		while(1)	/* 如果电机不是处于运动状态，则可以继续发送脉冲 */
 		{
