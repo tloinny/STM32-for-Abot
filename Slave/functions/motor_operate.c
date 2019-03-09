@@ -91,76 +91,10 @@ void motor_dir(u8 dir)
  *				1:成功配置send_buf
  *				0:配置过程出现问题
  */
-//u8 motor_point_movement_ready(float steps, u8 dir, float speed_max, float speed_init, float acc_accel, float acc_decel, u16 * S_buf)
-//{
-//	if(((u16)(steps+1.5))>send_buf_size) return 0;	/* 检查边界 */
-//	u16 max_steps_lim = (u16)(0.5+((speed_max+speed_init)*(speed_max-speed_init))/ (2*step_angle*acc_accel*100));	/* the number of steps needed to accelerate to the desired speed */
-//	u16 acc_lim = (u16)(0.5+(steps * (acc_decel/(acc_accel+acc_decel))));		/* the number of steps before deceleration starts */
-//	u16 arr_max = (u16)((0.5+(step_angle * timer_frep /speed_max)));
-//	u16 K = 2*speed_init*speed_init/(acc_accel*step_angle);
-//	u16 accel_steps = 0;
-//	u16 *decel_steps = (u16*)malloc(sizeof(u16));
-//	u16 *temp = (u16*)malloc(sizeof(u16));
-//	u16 del_temp = 0;
-//	u16 const_steps = 0;
-//	u16 i = 0;
-//	float compensation = 0;
-//		if(max_steps_lim <= acc_lim)	/* 如果可以加速到最大速度 */
-//		{
-//			accel_steps = max_steps_lim;
-//			*decel_steps = accel_steps * (acc_accel/acc_decel);
-//			const_steps = steps - (accel_steps + *decel_steps); 
-//			*temp = accel_steps + const_steps;
-//			free(decel_steps);
-//		}else	/* 如果无法加速到最大速度 */
-//		{
-//			accel_steps = acc_lim;
-//			free(decel_steps);
-//		}
-//		steps = (u16)(0.5+steps);
-//		while(!(i > steps))
-//		{
-//			if(i == 0 && speed_init == 0) *(S_buf + i) = (u16)ceil(timer_frep* sqrt(2*step_angle/acc_accel) * 0.676);
-//			if(i == 0) *(S_buf + i) = (u16)ceil(timer_frep*(step_angle/speed_init));
-//			if(i > 0 && i < accel_steps)	/* 加速段 */
-//			{
-//				*temp = (u16)(0.5+(*(S_buf + i - 1) - ((*(S_buf + i - 1) * 2 + compensation) / (4 * i + 1 + K))));
-//				if(*temp > arr_max)
-//				*(S_buf + i) = (*temp);
-//				else *(S_buf + i) = arr_max;
-//				compensation = (float)fmod( *(S_buf + i - 1) * 2 + compensation, 4 * i + 1 + K);	/* 更新补偿 */
-//			}
-//			if(i >= accel_steps && i < accel_steps + const_steps)	/* 匀速段 */
-//			{
-//				*(S_buf + i) = arr_max;
-//			}
-//			if(i >= accel_steps + const_steps && i < steps)	/* 减速段 */
-//			{
-//				*temp = (u16)(0.5+(*(S_buf+i-1)+((*(S_buf+i-1)*2+compensation)/(4*i+1+K))));
-//				if(*temp > arr_max)
-//				*(S_buf + i) = (*temp);
-//				else *(S_buf + i) = arr_max;
-//				compensation = (float)fmod(*(S_buf+i-1)*2+compensation, 4*i+1+K);	/* 更新补偿 */
-//			}
-//			if (i == steps)
-//			{
-//				//if(i!=1) *(S_buf+i-1) = del_temp;
-//				*(S_buf + i) = 0 ;	/* 结束 */
-//				free(temp);
-//			}
-//			++i;
-//		}
-//		motor_dir(dir);	/* 配置电机运动方向 */
-//		DMA_Cmd(DMA1_Channel6, DISABLE);	/* 修改DMA配置之前需确保DMA已经失能，否则无法修改配置 */
-//		steps>0 ? DMA_SetCurrDataCounter(DMA1_Channel6,(u16)steps + 1) : DMA_SetCurrDataCounter(DMA1_Channel6,0);	/* 提前配置DMA的发送位数，但是暂时不使能DMA */
-//		pre_cndtr = (u32)steps;
-//		return 1;
-//}
-
-u8 motor_point_movement_ready(float steps, u8 dir, float speed_max, float speed_init, float acc_accel, float acc_decel, u16 * S_buf)
+u8 motor_point_movement_ready(float steps, u8 dir, float speed_max, float speed_init, float acc_accel, u16 * S_buf)
 {
 	if(((u16)(steps+1.5))>send_buf_size) return 0;	/* 检查边界 */
-	u16 acc_lim = (u16)(0.5+(steps * (acc_decel/(acc_accel+acc_decel))));		/* the number of steps before deceleration starts */
+	u16 acc_lim = (u16)(0.5+(steps * 0.5));		/* the number of steps before deceleration starts */
 	u16 arr_max = (u16)((0.5+(step_angle * timer_frep /speed_max)));
 	u16 K = 2*speed_init*speed_init/(acc_accel*step_angle);
 	u16 accel_steps = 0;
@@ -178,9 +112,7 @@ u8 motor_point_movement_ready(float steps, u8 dir, float speed_max, float speed_
 			{
 				*temp = (u16)(0.5+(*(S_buf + i - 1) - ((*(S_buf + i - 1) * 2 + compensation) / (4 * i + 1 + K))));
 				if(*temp > arr_max)
-				{
 					*(S_buf + i) = (*temp);
-				}
 				else 
 				{
 					if(const_steps == 0)
@@ -192,9 +124,7 @@ u8 motor_point_movement_ready(float steps, u8 dir, float speed_max, float speed_
 				compensation = (float)fmod( *(S_buf + i - 1) * 2 + compensation, 4 * i + 1 + K);	/* 更新补偿 */
 			}
 			if(i >= accel_steps && i < accel_steps + const_steps)	/* 匀速段 */
-			{
 				*(S_buf + i) = arr_max;
-			}
 			if(i >= accel_steps + const_steps && i < steps)	/* 减速段 */
 			{
 				*(S_buf+i) = (u16)(0.5+(*(S_buf+i-1)+((*(S_buf+i-1)*2+compensation)/(4*i+1+K))));
@@ -320,17 +250,10 @@ void motor_stop()
  */
 void motor_home()
 {
-	while(home_flag == 0)	/* 当限位开关没有被触发 */
-	{
-		/* 逐步向关节原点靠近 */
-		motor_point_movement_ready(1, 0, 0.5*pi, 0.5*pi, 0.1, 0.1, send_buf);
-		motor_run();
-		while(1)	/* 如果电机不是处于运动状态，则可以继续发送脉冲 */
-		{
-			if(MotorStatus() != m_moving) break;
-		}
-		motor_stop();
-	}
+	if(home_flag == 0){
+	motor_point_movement_ready(2000, 0, 2*pi, 0.1*pi, 0.02, send_buf);
+	motor_run();}
+	while(home_flag == 0);	/* 当限位开关没有被触发 */
 	/* 限位开关被触发，电机停止 */
 	motor_stop();	/* 停止电机 */
 	current_position = 0;	/* 初始化虚拟里程计，设置虚拟里程计原点，该值由实际机器人的限位开关放置位置决定 */

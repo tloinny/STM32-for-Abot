@@ -42,8 +42,8 @@
  *修改所选序号前的注释即可
  */
 //#define SLAVE0 
-//#define SLAVE1
-#define SLAVE2
+#define SLAVE1
+//#define SLAVE2
 //#define SLAVE3 
  
 /*
