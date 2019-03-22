@@ -42,16 +42,33 @@
  *修改所选序号前的注释即可
  */
 //#define SLAVE0 
-#define SLAVE1
+//#define SLAVE1
 //#define SLAVE2
-//#define SLAVE3 
+#define SLAVE3 
  
 /*
  *电机参数设置
  */
+#ifdef SLAVE0
 #define motor_type 200	/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2		/* 驱动细分数 例：1/2 */
-
+#define ratio 10					/* 机械减速比 例：1/10 */
+#endif
+#ifdef SLAVE1
+#define motor_type 200	/* 电机类型，例：200 pulse/r */
+#define Micro_Step 2		/* 驱动细分数 例：1/2 */
+#define ratio 9					/* 机械减速比 例：1/9 */
+#endif
+#ifdef SLAVE2
+#define motor_type 200	/* 电机类型，例：200 pulse/r */
+#define Micro_Step 2		/* 驱动细分数 例：1/2 */
+#define ratio 16					/* 机械减速比 例：1/16 */
+#endif
+#ifdef SLAVE3
+#define motor_type 400	/* 电机类型，例：400 pulse/r */
+#define Micro_Step 2		/* 驱动细分数 例：1/2 */
+#define ratio 12					/* 机械减速比 例：1/12 */
+#endif
 
 /*
  *定时器分频数设置 
@@ -71,11 +88,6 @@
  *计算参数
  */
 #define pi 3.14
-
-/*
- *额外设置
- */
-#define ratio 12					/* 机械减速比 例：1/12 */
 
 /*
  *cmd
