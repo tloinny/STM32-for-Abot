@@ -47,7 +47,7 @@
 #define SLAVE3 
  
 /*
- *电机参数设置
+ *关节参数设置
  */
 #ifdef SLAVE0
 #define motor_type 200	/* 电机类型，例：200 pulse/r */

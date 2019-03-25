@@ -250,9 +250,11 @@ void motor_stop()
  */
 void motor_home()
 {
-	if(home_flag == 0){
-	motor_point_movement_ready(2000, 0, 2*pi, 0.1*pi, 0.02, send_buf);
-	motor_run();}
+	if(home_flag == 0)
+	{
+		motor_point_movement_ready(motor_type*Micro_Step*ratio*pi, 0, 2*pi, 0.1*pi, 0.02, send_buf);
+		motor_run();
+	}
 	while(home_flag == 0);	/* 当限位开关没有被触发 */
 	/* 限位开关被触发，电机停止 */
 	motor_stop();	/* 停止电机 */
