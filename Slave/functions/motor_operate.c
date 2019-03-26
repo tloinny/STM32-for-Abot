@@ -252,13 +252,21 @@ void motor_home()
 {
 	if(home_flag == 0)
 	{
-		motor_point_movement_ready(motor_type*Micro_Step*ratio*pi, 0, 2*pi, 0.1*pi, 0.02, send_buf);
+		#if SLAVE0||SLAVE1
+		motor_point_movement_ready(motor_type*Micro_Step*ratio, 0, 2*pi, 0.1*pi, 0.05, send_buf);
+		#endif
+		#if SLAVE2
+		motor_point_movement_ready(motor_type*Micro_Step*ratio, 1, 2*pi, 0.1*pi, 0.05, send_buf);
+		#endif
+		#if SLAVE3
+		motor_point_movement_ready(motor_type*Micro_Step*ratio*0.6, 0, 10*pi, 0.1*pi, 0.1, send_buf);
+		#endif
 		motor_run();
 	}
 	while(home_flag == 0);	/* 当限位开关没有被触发 */
 	/* 限位开关被触发，电机停止 */
 	motor_stop();	/* 停止电机 */
-	current_position = 0;	/* 初始化虚拟里程计，设置虚拟里程计原点，该值由实际机器人的限位开关放置位置决定 */
+	current_position = (-1*home_offset/pi)*motor_type*Micro_Step*ratio;	/* 初始化虚拟里程计，设置虚拟里程计原点，该值由实际机器人的限位开关放置位置决定 */
 	zeroed = 1;	/* 标志为已经归零 */
 	motion_buf_init();	/* 初始化运动信息缓存区的虚拟原点 */
 }

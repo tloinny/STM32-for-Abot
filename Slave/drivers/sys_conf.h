@@ -38,36 +38,39 @@
  */
  
 /*
- *配置节点序号
- *修改所选序号前的注释即可
+ *配置节点
  */
-//#define SLAVE0 
-//#define SLAVE1
-//#define SLAVE2
-#define SLAVE3 
+#define SLAVE0 0
+#define SLAVE1 0
+#define SLAVE2 0
+#define SLAVE3 1`
  
 /*
  *关节参数设置
  */
-#ifdef SLAVE0
+#if SLAVE0
 #define motor_type 200	/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2		/* 驱动细分数 例：1/2 */
-#define ratio 10					/* 机械减速比 例：1/10 */
+#define ratio 10				/* 机械减速比 例：1/10 */
+#define home_offset 0		/* 限位开关补偿量 */
 #endif
-#ifdef SLAVE1
+#if SLAVE1
 #define motor_type 200	/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2		/* 驱动细分数 例：1/2 */
 #define ratio 9					/* 机械减速比 例：1/9 */
+#define home_offset 0		/* 限位开关补偿量 */
 #endif
-#ifdef SLAVE2
+#if SLAVE2
 #define motor_type 200	/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2		/* 驱动细分数 例：1/2 */
-#define ratio 16					/* 机械减速比 例：1/16 */
+#define ratio 16				/* 机械减速比 例：1/16 */
+#define home_offset 0		/* 限位开关补偿量 */
 #endif
-#ifdef SLAVE3
+#if SLAVE3
 #define motor_type 400	/* 电机类型，例：400 pulse/r */
 #define Micro_Step 2		/* 驱动细分数 例：1/2 */
-#define ratio 12					/* 机械减速比 例：1/12 */
+#define ratio 12				/* 机械减速比 例：1/12 */
+#define home_offset 0		/* 限位开关补偿量 */
 #endif
 
 /*
@@ -80,7 +83,7 @@
 /*
  *数组容量设置
  */
-#define send_buf_size 6401
+#define send_buf_size 6501
 #define motion_buf_size 500
 #define can_buf_size 8
 
@@ -103,7 +106,7 @@
 /*
  *feedback
  */
-#ifdef SLAVE0
+#if SLAVE0
 #define c_motion_request		"Q0"
 #define c_receive_call			"RC"
 #define c_motor_home 				"H0"
@@ -117,7 +120,7 @@
 #define c_buf_usefull				"U"
 #endif
 
-#ifdef SLAVE1
+#if SLAVE1
 #define c_motion_request		"Q1"
 #define c_receive_call			"RC"
 #define c_motor_home 				"H1"
@@ -131,7 +134,7 @@
 #define c_buf_usefull				"U"
 #endif
 
-#ifdef SLAVE2
+#if SLAVE2
 #define c_motion_request		"Q2"
 #define c_receive_call			"RC"
 #define c_motor_home 				"H2"
@@ -145,7 +148,7 @@
 #define c_buf_usefull				"U"
 #endif
 
-#ifdef SLAVE3
+#if SLAVE3
 #define c_motion_request		"Q3"
 #define c_receive_call			"RC"
 #define c_motor_home 				"H3"

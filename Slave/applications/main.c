@@ -67,7 +67,7 @@ int main(void)
 							
 							/* 计算与上一个位置的delta值，用于配置电机运动参数 */
 							delta_rad = fabs((motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000);
-							motor_point_movement_ready(motor_type*Micro_Step*ratio*(delta_rad/pi/2), motion_buf[consum_count].dir, motion_buf[consum_count].speed_max*pi, 0.1*pi, 0.5, send_buf);
+							motor_point_movement_ready(motor_type*Micro_Step*ratio*(delta_rad/pi/2), motion_buf[consum_count].dir, motor_type*Micro_Step*ratio*(delta_rad/pi/2)*0.005*pi, 0.1*pi, 0.5, send_buf);
 							
 							/* 用完清零上一位的数据 */
 							if(consum_count - 1 > 0)
