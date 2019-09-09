@@ -49,6 +49,7 @@ Section Cross References
     motor_operate.o(i.motor_disable) refers to motor_operate.o(.data) for Motor_status
     motor_operate.o(i.motor_enable) refers to stm32f10x_gpio.o(i.GPIO_ResetBits) for GPIO_ResetBits
     motor_operate.o(i.motor_enable) refers to motor_operate.o(.data) for Motor_status
+    motor_operate.o(i.motor_home) refers to stm32f10x_gpio.o(i.GPIO_ReadInputDataBit) for GPIO_ReadInputDataBit
     motor_operate.o(i.motor_home) refers to motor_operate.o(i.motor_point_movement_ready) for motor_point_movement_ready
     motor_operate.o(i.motor_home) refers to motor_operate.o(i.motor_run) for motor_run
     motor_operate.o(i.motor_home) refers to motor_operate.o(i.motor_stop) for motor_stop
@@ -1032,13 +1033,13 @@ Image Symbol Table
     i.motor_disable                          0x08002558   Section        0  motor_operate.o(i.motor_disable)
     i.motor_enable                           0x08002574   Section        0  motor_operate.o(i.motor_enable)
     i.motor_home                             0x08002590   Section        0  motor_operate.o(i.motor_home)
-    i.motor_init                             0x080025f0   Section        0  motor_operate.o(i.motor_init)
-    i.motor_io_init                          0x0800262c   Section        0  motor_gpio.o(i.motor_io_init)
-    i.motor_point_movement_ready             0x080026bc   Section        0  motor_operate.o(i.motor_point_movement_ready)
-    i.motor_run                              0x08002a6c   Section        0  motor_operate.o(i.motor_run)
-    i.motor_stop                             0x08002ac0   Section        0  motor_operate.o(i.motor_stop)
-    i.sqrt                                   0x08002af0   Section        0  sqrt.o(i.sqrt)
-    i.uart_init                              0x08002b3c   Section        0  usart.o(i.uart_init)
+    i.motor_init                             0x08002608   Section        0  motor_operate.o(i.motor_init)
+    i.motor_io_init                          0x08002644   Section        0  motor_gpio.o(i.motor_io_init)
+    i.motor_point_movement_ready             0x080026d4   Section        0  motor_operate.o(i.motor_point_movement_ready)
+    i.motor_run                              0x08002a84   Section        0  motor_operate.o(i.motor_run)
+    i.motor_stop                             0x08002ad8   Section        0  motor_operate.o(i.motor_stop)
+    i.sqrt                                   0x08002b08   Section        0  sqrt.o(i.sqrt)
+    i.uart_init                              0x08002b54   Section        0  usart.o(i.uart_init)
     .data                                    0x20000000   Section       21  main.o(.data)
     .data                                    0x20000015   Section       16  can_protocol.o(.data)
     .data                                    0x20000028   Section       20  motor_operate.o(.data)
@@ -1245,16 +1246,16 @@ Image Symbol Table
     motor_dir                                0x08002529   Thumb Code    40  motor_operate.o(i.motor_dir)
     motor_disable                            0x08002559   Thumb Code    18  motor_operate.o(i.motor_disable)
     motor_enable                             0x08002575   Thumb Code    18  motor_operate.o(i.motor_enable)
-    motor_home                               0x08002591   Thumb Code    64  motor_operate.o(i.motor_home)
-    motor_init                               0x080025f1   Thumb Code    54  motor_operate.o(i.motor_init)
-    motor_io_init                            0x0800262d   Thumb Code   130  motor_gpio.o(i.motor_io_init)
-    motor_point_movement_ready               0x080026bd   Thumb Code   898  motor_operate.o(i.motor_point_movement_ready)
-    motor_run                                0x08002a6d   Thumb Code    66  motor_operate.o(i.motor_run)
-    motor_stop                               0x08002ac1   Thumb Code    34  motor_operate.o(i.motor_stop)
-    sqrt                                     0x08002af1   Thumb Code    76  sqrt.o(i.sqrt)
-    uart_init                                0x08002b3d   Thumb Code   152  usart.o(i.uart_init)
-    Region$$Table$$Base                      0x08002bdc   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08002bfc   Number         0  anon$$obj.o(Region$$Table)
+    motor_home                               0x08002591   Thumb Code    86  motor_operate.o(i.motor_home)
+    motor_init                               0x08002609   Thumb Code    54  motor_operate.o(i.motor_init)
+    motor_io_init                            0x08002645   Thumb Code   130  motor_gpio.o(i.motor_io_init)
+    motor_point_movement_ready               0x080026d5   Thumb Code   898  motor_operate.o(i.motor_point_movement_ready)
+    motor_run                                0x08002a85   Thumb Code    66  motor_operate.o(i.motor_run)
+    motor_stop                               0x08002ad9   Thumb Code    34  motor_operate.o(i.motor_stop)
+    sqrt                                     0x08002b09   Thumb Code    76  sqrt.o(i.sqrt)
+    uart_init                                0x08002b55   Thumb Code   152  usart.o(i.uart_init)
+    Region$$Table$$Base                      0x08002bf4   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x08002c14   Number         0  anon$$obj.o(Region$$Table)
     motion_buf_full                          0x20000000   Data           1  main.o(.data)
     empty_flag                               0x20000002   Data           2  main.o(.data)
     full_flag                                0x20000004   Data           2  main.o(.data)
@@ -1295,9 +1296,9 @@ Memory Map of the image
 
   Image Entry point : 0x080000ed
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00002c7c, Max: 0x00010000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00002c94, Max: 0x00010000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00002bfc, Max: 0x00010000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00002c14, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1421,35 +1422,35 @@ Memory Map of the image
     0x08002528   0x08002528   0x00000030   Code   RO          181    i.motor_dir         motor_operate.o
     0x08002558   0x08002558   0x0000001c   Code   RO          182    i.motor_disable     motor_operate.o
     0x08002574   0x08002574   0x0000001c   Code   RO          183    i.motor_enable      motor_operate.o
-    0x08002590   0x08002590   0x00000060   Code   RO          184    i.motor_home        motor_operate.o
-    0x080025f0   0x080025f0   0x0000003c   Code   RO          185    i.motor_init        motor_operate.o
-    0x0800262c   0x0800262c   0x00000090   Code   RO          609    i.motor_io_init     motor_gpio.o
-    0x080026bc   0x080026bc   0x000003b0   Code   RO          186    i.motor_point_movement_ready  motor_operate.o
-    0x08002a6c   0x08002a6c   0x00000054   Code   RO          187    i.motor_run         motor_operate.o
-    0x08002ac0   0x08002ac0   0x00000030   Code   RO          188    i.motor_stop        motor_operate.o
-    0x08002af0   0x08002af0   0x0000004c   Code   RO         3652    i.sqrt              m_ws.l(sqrt.o)
-    0x08002b3c   0x08002b3c   0x000000a0   Code   RO          523    i.uart_init         usart.o
-    0x08002bdc   0x08002bdc   0x00000020   Data   RO         3784    Region$$Table       anon$$obj.o
+    0x08002590   0x08002590   0x00000078   Code   RO          184    i.motor_home        motor_operate.o
+    0x08002608   0x08002608   0x0000003c   Code   RO          185    i.motor_init        motor_operate.o
+    0x08002644   0x08002644   0x00000090   Code   RO          609    i.motor_io_init     motor_gpio.o
+    0x080026d4   0x080026d4   0x000003b0   Code   RO          186    i.motor_point_movement_ready  motor_operate.o
+    0x08002a84   0x08002a84   0x00000054   Code   RO          187    i.motor_run         motor_operate.o
+    0x08002ad8   0x08002ad8   0x00000030   Code   RO          188    i.motor_stop        motor_operate.o
+    0x08002b08   0x08002b08   0x0000004c   Code   RO         3652    i.sqrt              m_ws.l(sqrt.o)
+    0x08002b54   0x08002b54   0x000000a0   Code   RO          523    i.uart_init         usart.o
+    0x08002bf4   0x08002bf4   0x00000020   Data   RO         3784    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08002bfc, Size: 0x000049e8, Max: 0x00005000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08002c14, Size: 0x000049e8, Max: 0x00005000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x08002bfc   0x00000015   Data   RW            3    .data               main.o
-    0x20000015   0x08002c11   0x00000010   Data   RW          156    .data               can_protocol.o
-    0x20000025   0x08002c21   0x00000003   PAD
-    0x20000028   0x08002c24   0x00000014   Data   RW          191    .data               motor_operate.o
-    0x2000003c   0x08002c38   0x00000004   Data   RW          332    .data               delay.o
-    0x20000040   0x08002c3c   0x00000001   Data   RW          357    .data               exti.o
-    0x20000041   0x08002c3d   0x00000003   PAD
-    0x20000044   0x08002c40   0x00000006   Data   RW          525    .data               usart.o
-    0x2000004a   0x08002c46   0x00000002   Data   RW          587    .data               dma.o
-    0x2000004c   0x08002c48   0x00000014   Data   RW         2218    .data               stm32f10x_rcc.o
-    0x20000060   0x08002c5c   0x00000014   Data   RW         3592    .data               system_stm32f10x.o
-    0x20000074   0x08002c70   0x00000004   Data   RW         3758    .data               mc_w.l(mvars.o)
-    0x20000078   0x08002c74   0x00000004   Data   RW         3759    .data               mc_w.l(mvars.o)
-    0x2000007c   0x08002c78   0x00000004   Data   RW         3763    .data               mc_w.l(errno.o)
+    0x20000000   0x08002c14   0x00000015   Data   RW            3    .data               main.o
+    0x20000015   0x08002c29   0x00000010   Data   RW          156    .data               can_protocol.o
+    0x20000025   0x08002c39   0x00000003   PAD
+    0x20000028   0x08002c3c   0x00000014   Data   RW          191    .data               motor_operate.o
+    0x2000003c   0x08002c50   0x00000004   Data   RW          332    .data               delay.o
+    0x20000040   0x08002c54   0x00000001   Data   RW          357    .data               exti.o
+    0x20000041   0x08002c55   0x00000003   PAD
+    0x20000044   0x08002c58   0x00000006   Data   RW          525    .data               usart.o
+    0x2000004a   0x08002c5e   0x00000002   Data   RW          587    .data               dma.o
+    0x2000004c   0x08002c60   0x00000014   Data   RW         2218    .data               stm32f10x_rcc.o
+    0x20000060   0x08002c74   0x00000014   Data   RW         3592    .data               system_stm32f10x.o
+    0x20000074   0x08002c88   0x00000004   Data   RW         3758    .data               mc_w.l(mvars.o)
+    0x20000078   0x08002c8c   0x00000004   Data   RW         3759    .data               mc_w.l(mvars.o)
+    0x2000007c   0x08002c90   0x00000004   Data   RW         3763    .data               mc_w.l(errno.o)
     0x20000080        -       0x00000fa0   Zero   RW            2    .bss                main.o
     0x20001020        -       0x000032ca   Zero   RW          189    .bss                motor_operate.o
     0x200042ea        -       0x000000c8   Zero   RW          524    .bss                usart.o
@@ -1466,32 +1467,32 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       440         26          0          0          0     216645   can.o
-        22          0          0         16          0       1131   can_protocol.o
-       144         22          0          4          0       1124   delay.o
-       108          8          0          2         44       1682   dma.o
-       118          8          0          1          0       1178   exti.o
-        56          6          0          0          0        463   led.o
-      1040        124          0         21       4000     275311   main.o
-       172         22          0          0          0       2177   misc.o
-       144         14          0          0          0        536   motor_gpio.o
-      1516        188          0         20      13002       6869   motor_operate.o
-        36          8        236          0       1536        796   startup_stm32f10x_md.o
-      1264         28          0          0          0       5335   stm32f10x_can.o
-       420          8          0          0          0       4127   stm32f10x_dma.o
-       160         12          0          0          0       1593   stm32f10x_exti.o
-       512         10          0          0          0       5308   stm32f10x_gpio.o
-        18          0          0          0          0       2511   stm32f10x_it.o
-       308         38          0         20          0       5162   stm32f10x_rcc.o
-       358         62          0          0          0       3208   stm32f10x_tim.o
-       408          6          0          0          0       5170   stm32f10x_usart.o
+       440         26          0          0          0     216469   can.o
+        22          0          0         16          0       1071   can_protocol.o
+       144         22          0          4          0       1060   delay.o
+       108          8          0          2         44       1598   dma.o
+       118          8          0          1          0       1118   exti.o
+        56          6          0          0          0        439   led.o
+      1040        124          0         21       4000     275039   main.o
+       172         22          0          0          0       2097   misc.o
+       144         14          0          0          0        512   motor_gpio.o
+      1540        190          0         20      13002       6629   motor_operate.o
+        36          8        236          0       1536        780   startup_stm32f10x_md.o
+      1264         28          0          0          0       5187   stm32f10x_can.o
+       420          8          0          0          0       4027   stm32f10x_dma.o
+       160         12          0          0          0       1533   stm32f10x_exti.o
+       512         10          0          0          0       5152   stm32f10x_gpio.o
+        18          0          0          0          0       2383   stm32f10x_it.o
+       308         38          0         20          0       5038   stm32f10x_rcc.o
+       358         62          0          0          0       3092   stm32f10x_tim.o
+       408          6          0          0          0       5034   stm32f10x_usart.o
          0          0          0          0          0         32   sys.o
-       328         28          0         20          0       2409   system_stm32f10x.o
-       148         12          0          0         10        928   timer.o
-       296         22          0          6        200       3008   usart.o
+       328         28          0         20          0       2309   system_stm32f10x.o
+       148         12          0          0         10        880   timer.o
+       296         22          0          6        200       2920   usart.o
 
     ----------------------------------------------------------------------
-      8038        652        268        116      18792     546703   Object Totals
+      8062        654        268        116      18792     544399   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         22          0          0          6          0          0   (incl. Padding)
 
@@ -1563,15 +1564,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     10992        714        268        128      18792     544695   Grand Totals
-     10992        714        268        128      18792     544695   ELF Image Totals
-     10992        714        268        128          0          0   ROM Totals
+     11016        716        268        128      18792     542391   Grand Totals
+     11016        716        268        128      18792     542391   ELF Image Totals
+     11016        716        268        128          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                11260 (  11.00kB)
+    Total RO  Size (Code + RO Data)                11284 (  11.02kB)
     Total RW  Size (RW Data + ZI Data)             18920 (  18.48kB)
-    Total ROM Size (Code + RO Data + RW Data)      11388 (  11.12kB)
+    Total ROM Size (Code + RO Data + RW Data)      11412 (  11.14kB)
 
 ==============================================================================
 

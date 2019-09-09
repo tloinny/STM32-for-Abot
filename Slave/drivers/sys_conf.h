@@ -57,25 +57,25 @@
 #define motor_type 200			/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2				/* 驱动细分数 例：1/2 */
 #define ratio 10						/* 机械减速比 例：1/10 */
-#define home_offset 0				/* 限位开关补偿量 */
+#define home_offset -0.042				/* 限位开关补偿量 */
 #endif
 #if SLAVE1
 #define motor_type 200			/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2				/* 驱动细分数 例：1/2 */
 #define ratio 9							/* 机械减速比 例：1/9 */
-#define home_offset 0				/* 限位开关补偿量 */
+#define home_offset -0.180				/* 限位开关补偿量 */
 #endif
 #if SLAVE2
 #define motor_type 200			/* 电机类型，例：200 pulse/r */
 #define Micro_Step 2				/* 驱动细分数 例：1/2 */
 #define ratio 16						/* 机械减速比 例：1/16 */
-#define home_offset -1*pi		/* 限位开关补偿量 */
+#define home_offset 4.706		/* 限位开关补偿量 */
 #endif
 #if SLAVE3
 #define motor_type 400			/* 电机类型，例：400 pulse/r */
 #define Micro_Step 2				/* 驱动细分数 例：1/2 */
 #define ratio 12						/* 机械减速比 例：1/12 */
-#define home_offset 0				/* 限位开关补偿量 */
+#define home_offset -0.019				/* 限位开关补偿量 */
 #endif
 
 /*

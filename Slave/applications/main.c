@@ -62,13 +62,19 @@ int main(void)
 				{
 					case C_READY:	/* READY命令：预先配置好send_buf，等待ACTION命令 */
 						if(empty_flag < motion_buf_size && full_flag != 0 && MotorStatus() != m_moving && zeroed != 0)	/* 在运动信息缓存区可用而且电机不在运动状态时才能配置send_buf */
-						{
+						{ 
 							/* 消费者行为 */
 							
 							/* 计算与上一个位置的delta值，用于配置电机运动参数 */
 							delta_rad = fabs((motion_buf[consum_count].rad - motion_buf[consum_count-1].rad)/1000);
-							motor_point_movement_ready(motor_type*Micro_Step*ratio*(delta_rad/pi/2), motion_buf[consum_count].dir, motor_type*Micro_Step*ratio*(delta_rad/pi/2)*0.003*pi, 0.1*pi, 0.5, send_buf);
 							
+							#if SLAVE0||SLAVE1||SLAVE2
+							motor_point_movement_ready(motor_type*Micro_Step*ratio*(delta_rad/pi/2), motion_buf[consum_count].dir, motor_type*Micro_Step*ratio*(delta_rad/pi/2)*0.003*pi, 0.1*pi, 0.5, send_buf);
+							#endif
+							
+							#if SLAVE3
+							motor_point_movement_ready(motor_type*Micro_Step*ratio*(delta_rad/pi/2), motion_buf[consum_count].dir, motor_type*Micro_Step*ratio*(delta_rad/pi/2)*0.006*pi, 1*pi, 2, send_buf);
+							#endif
 							/* 用完清零上一位的数据 */
 							if(consum_count - 1 > 0)
 							{
