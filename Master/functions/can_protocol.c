@@ -224,7 +224,7 @@ void match_feedback(u8* feedback)
 				}
 				for(i=0;i<slave_num_max && ready_num == slave_num;++i) /* 当所有有效节点都完成准备工作 */
 				{
-					result = 1 && (slave[i]*ready_list[i] == slave[i]);	/* 防止一些在未知原因下进入总线的节点对此产生干扰 */
+					result = (1 && (slave[i]*ready_list[i] == slave[i]));	/* 防止一些在未知原因下进入总线的节点对此产生干扰 */
 				}
 				if(result) CAN_send_cmd(C_ACTION,slave_all);	/* 通知所有从机开始驱动电机 */
 			break;
